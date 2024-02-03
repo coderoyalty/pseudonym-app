@@ -1,7 +1,8 @@
 import express, { Express } from "express";
 import morgan from "morgan";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import BaseController from "./controllers/base.controller";
+import config from "./utils/config";
 
 export default class App {
 	private static instance: App | null = null;
@@ -34,11 +35,19 @@ export default class App {
 	}
 
 	private initMiddleware() {
-		this.app.use(
-			cors({
-				origin: "*",
-			}),
-		);
+		const allowedOrigins = config.allowedOrigins;
+		const corsOptions: CorsOptions = {
+			origin: function (origin: string | undefined, callback: any) {
+				if (!origin || allowedOrigins.includes(origin)) {
+					callback(null, true);
+				} else {
+					callback(new Error("Not allowed by CORS"));
+				}
+			},
+			credentials: true,
+		};
+
+		this.app.use(cors(corsOptions));
 		this.app.use(morgan("dev"));
 		this.app.use(express.json());
 		this.app.use(

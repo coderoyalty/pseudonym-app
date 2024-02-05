@@ -1,16 +1,17 @@
 import "./App.css";
 import "@radix-ui/themes/styles.css";
 import { Theme } from "@radix-ui/themes";
-import HomePage from "./components/home-page/home-page";
+import Router from "./routes";
+import { BrowserRouter } from "react-router-dom";
 
 function App() {
   return (
     <>
-      <div className="">
-        <Theme>
-          <HomePage />
-        </Theme>
-      </div>
+      <Theme>
+        <BrowserRouter>
+          <Router />
+        </BrowserRouter>
+      </Theme>
     </>
   );
 }

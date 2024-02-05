@@ -1,14 +1,14 @@
 import "./App.css";
 import "@radix-ui/themes/styles.css";
-import Author from "./components/Author";
 import { Theme } from "@radix-ui/themes";
+import HomePage from "./components/home-page/home-page";
 
 function App() {
   return (
     <>
-      <div className="flex items-center justify-center">
+      <div className="">
         <Theme>
-          <Author />
+          <HomePage />
         </Theme>
       </div>
     </>

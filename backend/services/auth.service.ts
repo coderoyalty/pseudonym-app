@@ -11,14 +11,7 @@ class AuthService {
 		//1. find any existing user with the given username or email address
 
 		const existingUser = await User.findOne({
-			$or: [
-				{
-					username: data.username.toLowerCase(),
-				},
-				{
-					email: data.email.toLowerCase(),
-				},
-			],
+			$or: [{ username: data.username }, { email: data.email }],
 		});
 
 		if (existingUser) {
@@ -44,7 +37,6 @@ class AuthService {
 				500,
 			);
 		}
-
 		return;
 	}
 }

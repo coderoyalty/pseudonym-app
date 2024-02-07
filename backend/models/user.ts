@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import config from "../utils/config";
 
 interface IUser extends mongoose.Document {
 	username: string;
@@ -7,6 +9,7 @@ interface IUser extends mongoose.Document {
 	password: string;
 	isEmailVerified: boolean;
 	isValidPassword(password: string): Promise<boolean>;
+	createToken(): string;
 }
 
 const UserSchema = new mongoose.Schema<IUser>(
@@ -51,6 +54,20 @@ UserSchema.methods.isValidPassword = async function (password: string) {
 	return await bcrypt.compare(password, this.password);
 };
 
+UserSchema.methods.createToken = async function () {
+	return jwt.sign(
+		{
+			id: this._id,
+			email: this.email,
+			username: this.username,
+		},
+		config.jwt.SECRET,
+		{
+			expiresIn: config.jwt.EXPIRES_IN,
+		},
+	);
+};
+
 UserSchema.set("toJSON", {
 	transform: function (doc, ret) {
 		ret.id = ret._id;
@@ -59,6 +76,8 @@ UserSchema.set("toJSON", {
 		delete ret.__v;
 	},
 });
+
+UserSchema.index({ username: 1 });
 
 const User = mongoose.model("user", UserSchema);
 export default User;

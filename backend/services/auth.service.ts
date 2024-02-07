@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { RegistrationSchema } from "../validators/auth.validator";
+import { LoginSchema, RegistrationSchema } from "../validators/auth.validator";
 import User from "../models/user";
 import CustomAPIError from "../errors/custom";
 import { StatusCodes } from "http-status-codes";
@@ -38,6 +38,29 @@ class AuthService {
 			);
 		}
 		return;
+	}
+
+	static async login(data: z.infer<typeof LoginSchema>) {
+		//1. find the user by its email
+		const user = await User.findOne({ email: data.email });
+		if (!user) {
+			throw new CustomAPIError(
+				"The email address you provided does not match any account in our system. Please double-check your email address or sign up for a new account.",
+				StatusCodes.NOT_FOUND,
+			);
+		}
+		//2. confirm the password
+		const valid = await user.isValidPassword(data.password);
+		if (!valid) {
+			throw new CustomAPIError(
+				"The password you provided is incorrect. Please double-check your password and try again.",
+				StatusCodes.UNAUTHORIZED,
+			);
+		}
+		//3. create and return the token
+		const token = user.createToken();
+
+		return token;
 	}
 }
 

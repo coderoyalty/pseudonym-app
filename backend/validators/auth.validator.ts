@@ -13,4 +13,6 @@ const RegistrationSchema = z.object({
 	password: z.string().min(8),
 });
 
-export { RegistrationSchema };
+const LoginSchema = RegistrationSchema.omit({ username: true });
+
+export { RegistrationSchema, LoginSchema };

@@ -1,4 +1,5 @@
 import "./base.controller";
+import "./auth.controller";
 
 // It's important to import every other controller file here!
 

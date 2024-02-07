@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
 import BaseController from "./controllers/base.controller";
 import config from "./utils/config";
+import errorMiddleWare from "./middlewares/error.middleware";
 
 export default class App {
 	private static instance: App | null = null;
@@ -65,7 +66,12 @@ export default class App {
 		return this.instance;
 	}
 
+	private initHandler() {
+		this.app.use(errorMiddleWare);
+	}
+
 	public run() {
+		this.initHandler();
 		const server = this.app.listen(this.port, () => {
 			const time = new Date().toISOString();
 			console.log(

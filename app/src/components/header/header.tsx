@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { Button } from "../ui/button";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { IconButton } from "@radix-ui/themes";
+import { motion, AnimatePresence } from "framer-motion";
 import React from "react";
 
 interface NavBarProps extends React.ComponentPropsWithoutRef<"nav"> {}
@@ -54,7 +55,6 @@ const NavBar: FC<NavBarProps> = () => {
     window.innerWidth,
     window.innerHeight,
   ]);
-
   const [isOpen, setOpen] = React.useState(false);
 
   const callback = () => {
@@ -80,25 +80,40 @@ const NavBar: FC<NavBarProps> = () => {
 
       <NavLinks autoHide />
 
-      <IconButton
-        size="2"
-        color="amber"
-        radius="medium"
-        variant="surface"
-        className="cursor-pointer md:hidden"
-        onClick={() => {
-          setOpen(!isOpen);
-        }}
-      >
-        <HamburgerMenuIcon width={"22"} height={"22"} />
-      </IconButton>
-      {isOpen && (
-        <div className="md:hidden w-full">
-          <div className="w-[70%] my-4 mx-auto flex flex-col gap-4 justify-center">
-            <NavLinks />
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        <motion.div>
+          <IconButton
+            size="2"
+            color="amber"
+            radius="medium"
+            variant="surface"
+            className="cursor-pointer md:hidden"
+            onClick={() => {
+              setOpen(!isOpen);
+            }}
+          >
+            <HamburgerMenuIcon width={"22"} height={"22"} />
+          </IconButton>
+        </motion.div>
+      </AnimatePresence>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 20,
+            }}
+            className="md:hidden w-full"
+          >
+            <div className="w-[70%] my-4 mx-auto flex flex-col gap-4 justify-center">
+              <NavLinks />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

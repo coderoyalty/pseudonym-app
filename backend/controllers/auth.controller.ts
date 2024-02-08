@@ -40,5 +40,10 @@ class AuthController extends BaseController {
 	}
 
 	@Post("/logout")
-	async logout(req: GenericRequest<{}>, res: Response) {}
+	async logout(req: GenericRequest<{}>, res: Response) {
+		res.clearCookie("auth");
+		res.status(200).json({
+			message: "You've sign-out successfully",
+		});
+	}
 }

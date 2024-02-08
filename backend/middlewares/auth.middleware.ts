@@ -7,7 +7,7 @@ import { GenericRequest } from "../@types";
 import { verifyToken } from "../utils/jwt";
 
 const AuthSchema = RegistrationSchema.omit({ password: true });
-type AuthUser = z.infer<typeof AuthSchema>;
+type AuthUser = z.infer<typeof AuthSchema> & { id: string };
 
 const validateRegistration = (
 	req: Request,
@@ -55,4 +55,27 @@ const isAlreadyLoggedIn = (
 	}
 };
 
-export { validateRegistration, validateLogin, isAlreadyLoggedIn };
+const isLoggedIn = (
+	req: GenericRequest<AuthUser>,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const token = req.cookies.auth;
+		const decoded = verifyToken(token);
+		const data = { ...(decoded as Record<string, any>) };
+		delete data.iat;
+		delete data.exp;
+		req.user = { ...data } as any;
+		return next(null);
+	} catch (err) {
+		next(
+			new CustomAPIError(
+				"You're unauthorized for this action",
+				StatusCodes.UNAUTHORIZED,
+			),
+		);
+	}
+};
+
+export { validateRegistration, validateLogin, isAlreadyLoggedIn, isLoggedIn };

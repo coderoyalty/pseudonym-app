@@ -80,22 +80,18 @@ const NavBar: FC<NavBarProps> = () => {
 
       <NavLinks autoHide />
 
-      <AnimatePresence>
-        <motion.div>
-          <IconButton
-            size="2"
-            color="amber"
-            radius="medium"
-            variant="surface"
-            className="cursor-pointer md:hidden"
-            onClick={() => {
-              setOpen(!isOpen);
-            }}
-          >
-            <HamburgerMenuIcon width={"22"} height={"22"} />
-          </IconButton>
-        </motion.div>
-      </AnimatePresence>
+      <IconButton
+        size="2"
+        color="amber"
+        radius="medium"
+        variant="surface"
+        className="cursor-pointer md:hidden"
+        onClick={() => {
+          setOpen(!isOpen);
+        }}
+      >
+        <HamburgerMenuIcon width={"22"} height={"22"} />
+      </IconButton>
       <AnimatePresence>
         {isOpen && (
           <motion.div

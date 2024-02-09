@@ -90,12 +90,6 @@ const SignupForm: React.FC = () => {
           <Button type="submit" className="py-3 w-full">
             Submit
           </Button>
-          <div className="text-center">
-            Already have an account?{" "}
-            <a href="#" className="text-blue-600">
-              Login
-            </a>
-          </div>
         </form>
       </Form>
     </>

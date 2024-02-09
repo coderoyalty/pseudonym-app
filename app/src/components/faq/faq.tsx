@@ -15,7 +15,7 @@ export const FAQ: React.FC<FAQProps> = ({}) => {
       <h1 className="text-center text-2xl font-medium mb-4">
         Frequently Asked Questions
       </h1>
-      <div className="max-w-[720px] max-md:max-w-[450px] mx-auto">
+      <div className="max-w-[720px] max-md:max-w-[450px] max-md:p-4 mx-auto">
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-0">
             <AccordionTrigger>What is this App for?</AccordionTrigger>

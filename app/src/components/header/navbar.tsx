@@ -4,34 +4,22 @@ import { IconButton } from "@radix-ui/themes";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC } from "react";
 import NavLinks from "./navlink";
+import useWindowSize from "@/hooks/useWindowSize";
 
 interface NavBarProps {}
 
 const NavBar: FC<NavBarProps> = () => {
-  const [_size, setWindowSize] = React.useState([
-    window.innerWidth,
-    window.innerHeight,
-  ]);
+  const ref = React.useRef<HTMLDivElement>(null);
   const [isOpen, setOpen] = React.useState(false);
 
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  useClickOutside(ref, () => setOpen(false));
-
-  const callback = () => {
-    setWindowSize([window.innerWidth, window.innerHeight]);
-
-    if (window.innerWidth > 768 && isOpen) {
+  const callback = (size: { x: number; y: number }) => {
+    if (size.x > 768 && isOpen) {
       setOpen(false);
     }
   };
-  React.useEffect(() => {
-    addEventListener("resize", callback);
 
-    return () => {
-      removeEventListener("resize", callback);
-    };
-  }, [callback]);
+  useClickOutside(ref, () => setOpen(false));
+  useWindowSize(callback);
 
   return (
     <nav
@@ -60,14 +48,18 @@ const NavBar: FC<NavBarProps> = () => {
         {isOpen && (
           <motion.div
             initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
+            animate={{
+              scale: 1,
+              transitionEnd: { display: "none" },
+              decelerate: 4000,
+            }}
             transition={{
               type: "spring",
               stiffness: 260,
               damping: 20,
             }}
             exit={{ scale: 0 }}
-            className="md:hidden w-full"
+            className="w-full"
           >
             <div className="w-[70%] my-4 mx-auto flex flex-col gap-4 justify-center">
               <NavLinks

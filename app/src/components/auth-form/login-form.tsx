@@ -69,12 +69,6 @@ const LoginForm: React.FC = () => {
           <Button type="submit" className="py-3 w-full">
             Submit
           </Button>
-          <div className="text-center">
-            Don't have an account?{" "}
-            <a href="#" className="text-blue-600">
-              Sign Up
-            </a>
-          </div>
         </form>
       </Form>
     </>

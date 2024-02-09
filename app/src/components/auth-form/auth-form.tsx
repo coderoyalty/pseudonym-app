@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
-import SignupForm from "../signup-form/signup-form";
-import LoginForm from "../login-form/login-form";
+import SignupForm from "./signup-form";
+import LoginForm from "./login-form";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IconButton, Tooltip } from "@radix-ui/themes";

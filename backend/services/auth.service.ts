@@ -3,6 +3,7 @@ import { LoginSchema, RegistrationSchema } from "../validators/auth.validator";
 import User from "../models/user";
 import CustomAPIError from "../errors/custom";
 import { StatusCodes } from "http-status-codes";
+import EmailService from "./email.service";
 
 type IAuth = z.infer<typeof RegistrationSchema>;
 
@@ -37,6 +38,9 @@ class AuthService {
 				500,
 			);
 		}
+
+		//3. send a verification mail
+		await EmailService.sendVerificationEmail({ id: user.id, ...data });
 		return;
 	}
 

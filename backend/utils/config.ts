@@ -14,6 +14,14 @@ const config = {
 	allowedOrigins: process.env.ALLOWED_ORIGINS
 		? process.env.ALLOWED_ORIGINS.split(",")
 		: [],
+
+	mail: {
+		HOST: process.env.SMTP_HOST || "",
+		PORT: parseInt(process.env.SMTP_PORT || "") || 2525,
+		USER: process.env.SMTP_USER || "",
+		PASSWORD: process.env.SMTP_PASSWORD || "",
+		SENDER: process.env.SMTP_SENDER || "",
+	},
 };
 
 export default config;

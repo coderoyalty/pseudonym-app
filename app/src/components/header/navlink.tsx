@@ -1,6 +1,7 @@
 import useSpecificDescendantClick from "@/hooks/useSpecificDescendantClick";
-import { Button } from "@radix-ui/themes";
+import { Button } from "../ui/button";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface NavLinksProps {
   autoHide?: boolean;
@@ -15,6 +16,9 @@ const NavLinks: React.FC<NavLinksProps> = ({
 }) => {
   const ref = React.useRef(null);
   useSpecificDescendantClick(ref, tag, onTagClick);
+
+  const navigate = useNavigate();
+
   return (
     <>
       <ul
@@ -49,7 +53,12 @@ const NavLinks: React.FC<NavLinksProps> = ({
         </li>
       </ul>
 
-      <Button className={autoHide ? "max-md:hidden" : ""}>Get Started</Button>
+      <Button
+        className={autoHide ? "max-md:hidden" : ""}
+        onClick={() => navigate("/auth?type=signup")}
+      >
+        Get Started
+      </Button>
     </>
   );
 };

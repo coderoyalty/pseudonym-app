@@ -33,10 +33,10 @@ export const HeroSection: React.FC<HeroProps> = ({}) => {
           onChange={(e) => {
             setUsername(e.target.value);
           }}
-          placeholder="enter handle to visit"
+          placeholder="enter that friend's handle..."
         />
         <Button type="submit" disabled={username.length === 0}>
-          Send
+          Visit
         </Button>
       </form>
     </section>

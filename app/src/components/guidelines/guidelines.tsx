@@ -8,7 +8,7 @@ export const Guidelines: React.FC<GuidelinesProps> = ({}) => {
   return (
     <section
       id="guidelines"
-      className="mt-8 p-8 text-neutral-900 font-medium mb-4"
+      className="scroll-my-14 mt-8 p-8 text-neutral-900 font-medium mb-4"
     >
       <h2 className="text-2xl font-medium text-center mb-4">
         Community Guidelines

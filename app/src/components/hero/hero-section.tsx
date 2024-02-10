@@ -15,7 +15,7 @@ export const HeroSection: React.FC<HeroProps> = ({}) => {
   };
 
   return (
-    <section className="min-h-[90vh] flex flex-col justify-center items-center">
+    <section className="min-h-[100vh] max-sm:py-8 flex flex-col justify-center items-center">
       <h1 className="text-center">
         <span className="text-3xl font-bold text-fuchsia-500">Pseudonym?</span>
       </h1>

@@ -2,8 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/home-page";
 import AuthPage from "./pages/AuthPage";
 import NotFoundPage from "./pages/404";
-import Dashboard from "./components/dashboard/dashboard";
-
+import DashboardLayout from "./components/dashboard/layout";
 import { motion } from "framer-motion";
 
 const DashboardHome = () => {
@@ -31,7 +30,7 @@ export default function Router() {
         <Route path="*" element={<NotFoundPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/auth" element={<AuthPage />} />
-        <Route path="/dashboard" element={<Dashboard />}>
+        <Route path="/dashboard" element={<DashboardLayout />}>
           <Route path="*" element={<DashboardHome />} />
         </Route>
       </Routes>

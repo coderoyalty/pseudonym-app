@@ -7,7 +7,7 @@ import {
 } from "@radix-ui/react-icons";
 import { IconProps } from "@radix-ui/react-icons/dist/types";
 import React from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 
 type NavItem = {
   icon: React.ForwardRefExoticComponent<
@@ -28,15 +28,15 @@ const SideBar: React.FC<SideBarProps> = ({ className, items = [] }) => {
         <ul className="space-y-1">
           {items.map((item, idx) => (
             <li key={idx}>
-              <a
-                href={item.to}
+              <Link
+                to={item.to}
                 className="font-medium text-base flex w-full items-center border-r-2 px-2 py-1.5 border-r-transparent text-gray-700 hover:border-r-gray-400"
               >
                 <span className="flex flex-grow items-center space-x-2">
                   <item.icon width={18} height={18} />
                   <span>{item.name}</span>
                 </span>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -45,7 +45,7 @@ const SideBar: React.FC<SideBarProps> = ({ className, items = [] }) => {
   );
 };
 
-const Dashboard = () => {
+const DashboardLayout = () => {
   const location = useLocation();
   console.log(location);
   const items: NavItem[] = [
@@ -91,4 +91,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardLayout;

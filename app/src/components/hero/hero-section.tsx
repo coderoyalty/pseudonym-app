@@ -1,10 +1,21 @@
 import React from "react";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { useNavigate } from "react-router-dom";
 
 export interface HeroProps extends React.ComponentPropsWithoutRef<"section"> {}
 
 export const HeroSection: React.FC<HeroProps> = ({}) => {
+  const [username, setUsername] = React.useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    navigate(`/${username}`);
+  };
+
   return (
-    <section className="min-h-[90vh] flex flex-col justify-center items-center">
+    <section className="min-h-[100vh] max-sm:py-8 flex flex-col justify-center items-center">
       <h1 className="text-center">
         <span className="text-3xl font-bold text-fuchsia-500">Pseudonym?</span>
       </h1>
@@ -16,6 +27,18 @@ export const HeroSection: React.FC<HeroProps> = ({}) => {
         behind the safety of a clever pseudonym. It's where honesty meets
         anonymity, and things get real... real fast.
       </p>
+      <form className="flex gap-1" onSubmit={handleSubmit}>
+        <Input
+          value={username}
+          onChange={(e) => {
+            setUsername(e.target.value);
+          }}
+          placeholder="enter that friend's handle..."
+        />
+        <Button type="submit" disabled={username.length === 0}>
+          Visit
+        </Button>
+      </form>
     </section>
   );
 };

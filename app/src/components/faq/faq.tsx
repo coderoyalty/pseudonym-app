@@ -11,7 +11,7 @@ export interface FAQProps extends React.ComponentPropsWithoutRef<"section"> {}
 
 export const FAQ: React.FC<FAQProps> = ({}) => {
   return (
-    <section id="faq">
+    <section id="faq" className="scroll-my-14 mt-4">
       <h1 className="text-center text-2xl font-medium mb-4">
         Frequently Asked Questions
       </h1>

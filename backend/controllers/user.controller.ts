@@ -7,6 +7,7 @@ import BaseController from "./base.controller";
 import { RegistrationSchema } from "../validators/auth.validator";
 import { z } from "zod";
 import Controller from "../utils/controller.decorator";
+import { isLoggedIn } from "../middlewares/auth.middleware";
 
 const AuthSchema = RegistrationSchema.omit({ password: true });
 type AuthUser = z.infer<typeof AuthSchema> & { id: string };
@@ -35,5 +36,12 @@ class UserController extends BaseController {
 			user,
 			currentUser,
 		});
+	}
+
+	@Get("/me/stats", isLoggedIn)
+	async userStats(req: GenericRequest<AuthUser>, res: Response) {
+		const data = await UserService.userStats(req.user.id);
+
+		return res.status(200).json(data);
 	}
 }

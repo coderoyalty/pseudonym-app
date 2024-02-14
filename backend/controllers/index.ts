@@ -1,6 +1,7 @@
 import "./base.controller";
 import "./auth.controller";
-import "./user-message.controller";
+import "./user.controller";
+import "./message.controller";
 // It's important to import every other controller file here!
 
 // The series of import statements above ensure that all controller modules are loaded,

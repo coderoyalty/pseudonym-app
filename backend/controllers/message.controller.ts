@@ -6,10 +6,8 @@ import { GenericRequest } from "../@types";
 import { RegistrationSchema } from "../validators/auth.validator";
 import { z } from "zod";
 import { isLoggedIn } from "../middlewares/auth.middleware";
-import UserService from "../services/user.service";
 import CustomAPIError from "../errors/custom";
-import { StatusCodes } from "http-status-codes";
-import UserMessageService from "../services/user-message.service";
+import MessageService from "../services/message.service";
 
 const AuthSchema = RegistrationSchema.omit({ password: true });
 type AuthUser = z.infer<typeof AuthSchema> & { id: string };
@@ -24,32 +22,12 @@ const messageSchema = z.object({
 });
 
 @Controller()
-class UserMessageController extends BaseController {
+class MessageController extends BaseController {
 	constructor() {
-		super("/users");
+		super("/");
 	}
 
-	@Get("/exists/:username")
-	async exists(req: GenericRequest<AuthUser>, res: Response) {
-		const { username } = req.params;
-		const user = await UserService.userByUsername(username);
-		if (!user) {
-			return res.status(StatusCodes.NOT_FOUND).json({
-				message: "There is no account associated with the provided username",
-			});
-		}
-
-		// determine if the user is the current user
-		const currentUser = req.user && req.user.username === user.username;
-
-		res.status(StatusCodes.OK).json({
-			exists: true,
-			user,
-			currentUser,
-		});
-	}
-
-	@Post("/:id/messages")
+	@Post("/users/:id/messages")
 	async create(req: Request, res: Response) {
 		const body = req.body;
 		const { id } = req.params;
@@ -58,14 +36,14 @@ class UserMessageController extends BaseController {
 			throw new CustomAPIError("The provided data is invalid", 400);
 		}
 
-		await UserMessageService.createMessage(id, parsed.data.content);
+		await MessageService.createMessage(id, parsed.data.content);
 
 		return res.status(201).json({
 			message: "Message has been successfully created",
 		});
 	}
 
-	@Get("/:id/messages", isLoggedIn)
+	@Get("/users/:id/messages", isLoggedIn)
 	async fetchAll(req: GenericRequest<AuthUser>, res: Response) {
 		const { id } = req.params;
 		const parsed = paginationQuerySchema.safeParse(req.query);
@@ -81,16 +59,16 @@ class UserMessageController extends BaseController {
 			);
 		}
 
-		const data = await UserMessageService.fetchMessages(id, parsed.data);
+		const data = await MessageService.fetchMessages(id, parsed.data);
 
 		return res.status(200).json({
 			...data,
 		});
 	}
 
-	@Patch("/:id/messages/:messageId/archived", isLoggedIn)
+	@Patch("/users/:id/messages/:messageId/archived", isLoggedIn)
 	async archiveMessage(req: Request, res: Response) {}
 
-	@Delete("/:id/messages/:msgId", isLoggedIn)
+	@Delete("/users/:id/messages/:msgId", isLoggedIn)
 	async removeMessage(req: Request, res: Response) {}
 }

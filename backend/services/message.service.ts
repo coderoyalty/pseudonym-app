@@ -8,7 +8,7 @@ interface PaginationInfo {
 	size: number;
 }
 
-class UserMessageService {
+class MessageService {
 	static async createMessage(ownerID: string, content: string) {
 		if (!mongoose.isValidObjectId(ownerID)) {
 			throw new CustomAPIError("The provided ID is invalid", 400);
@@ -68,4 +68,4 @@ class UserMessageService {
 	}
 }
 
-export default UserMessageService;
+export default MessageService;

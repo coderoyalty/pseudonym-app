@@ -1,9 +1,9 @@
 import React from "react";
-import Header from "../header/header";
-import { FAQ } from "../faq/faq";
-import { Guidelines } from "../guidelines/guidelines";
-import { HeroSection } from "../hero/hero-section";
-import { Footer } from "../footer/footer";
+import Header from "../components/header/header";
+import { FAQ } from "../components/faq/faq";
+import { Guidelines } from "../components/guidelines/guidelines";
+import { HeroSection } from "../components/hero/hero-section";
+import { Footer } from "../components/footer/footer";
 
 export interface HomePageProps {
   className?: string;

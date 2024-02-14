@@ -11,11 +11,11 @@ export interface FAQProps extends React.ComponentPropsWithoutRef<"section"> {}
 
 export const FAQ: React.FC<FAQProps> = ({}) => {
   return (
-    <section id="faq">
+    <section id="faq" className="scroll-my-14 mt-4">
       <h1 className="text-center text-2xl font-medium mb-4">
         Frequently Asked Questions
       </h1>
-      <div className="max-w-[720px] mx-auto">
+      <div className="max-w-[720px] max-md:max-w-[450px] max-md:p-4 mx-auto">
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-0">
             <AccordionTrigger>What is this App for?</AccordionTrigger>
@@ -43,7 +43,7 @@ export const FAQ: React.FC<FAQProps> = ({}) => {
             <AccordionTrigger>How do I share my link?</AccordionTrigger>
             <AccordionContent>
               Your link should looks something like this:
-              <Badge> {"https://anony.vercel.app/@<username>"}</Badge>
+              <Badge> {"https://pseudonym.vercel.app/@<username>"}</Badge>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">

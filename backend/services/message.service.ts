@@ -44,8 +44,10 @@ class MessageService {
 		const [total, messages] = await Promise.all([
 			Message.countDocuments({
 				owner: ownerID,
+				archived: false,
 			}),
-			Message.find({ ownerID })
+			Message.find({ owner: ownerID, archived: false })
+				.select("-archived")
 				.sort({
 					_id: "desc",
 				})

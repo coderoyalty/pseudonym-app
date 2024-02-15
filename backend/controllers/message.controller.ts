@@ -13,8 +13,8 @@ const AuthSchema = RegistrationSchema.omit({ password: true });
 type AuthUser = z.infer<typeof AuthSchema> & { id: string };
 
 const paginationQuerySchema = z.object({
-	page: z.number().min(1).default(1),
-	size: z.number().min(10).max(50).default(10),
+	page: z.number().min(0).optional().default(1),
+	size: z.number().min(10).max(50).optional().default(10),
 });
 
 const messageSchema = z.object({
@@ -24,7 +24,7 @@ const messageSchema = z.object({
 @Controller()
 class MessageController extends BaseController {
 	constructor() {
-		super("/");
+		super("");
 	}
 
 	@Post("/users/:id/messages")
@@ -46,7 +46,11 @@ class MessageController extends BaseController {
 	@Get("/users/:id/messages", isLoggedIn)
 	async fetchAll(req: GenericRequest<AuthUser>, res: Response) {
 		const { id } = req.params;
-		const parsed = paginationQuerySchema.safeParse(req.query);
+		const { page, size } = req.query;
+		const parsed = paginationQuerySchema.safeParse({
+			page: parseInt(page as any),
+			size: parseInt(size as any),
+		});
 
 		if (!parsed.success) {
 			throw new CustomAPIError("The provided data is invalid", 400);

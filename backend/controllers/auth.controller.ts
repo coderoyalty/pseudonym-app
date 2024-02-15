@@ -11,6 +11,7 @@ import {
 	validateLogin,
 	validateRegistration,
 } from "../middlewares/auth.middleware";
+import { Cookie } from "../utils/cookie";
 
 @Controller()
 class AuthController extends BaseController {
@@ -33,7 +34,8 @@ class AuthController extends BaseController {
 		const { email, password } = req.body;
 
 		const token = await AuthService.login({ email, password });
-		res.cookie("auth", token, { httpOnly: true });
+		const cookie = new Cookie("auth", token, { httpOnly: true });
+		cookie.set(res);
 
 		return res.status(200).json({
 			message: "You've signed-in successfully",

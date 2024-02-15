@@ -7,6 +7,7 @@ import { RegistrationSchema } from "../validators/auth.validator";
 import AuthService from "../services/auth.service";
 import {
 	isAlreadyLoggedIn,
+	loginLimiter,
 	validateLogin,
 	validateRegistration,
 } from "../middlewares/auth.middleware";
@@ -27,7 +28,7 @@ class AuthController extends BaseController {
 		});
 	}
 
-	@Post("/login", isAlreadyLoggedIn, validateLogin)
+	@Post("/login", loginLimiter, isAlreadyLoggedIn, validateLogin)
 	async login(req: GenericRequest<{}>, res: Response) {
 		const { email, password } = req.body;
 

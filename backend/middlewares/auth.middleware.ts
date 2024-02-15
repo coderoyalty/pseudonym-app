@@ -5,6 +5,7 @@ import CustomAPIError from "../errors/custom";
 import { StatusCodes } from "http-status-codes";
 import { GenericRequest } from "../@types";
 import { verifyToken } from "../utils/jwt";
+import rateLimit from "express-rate-limit";
 
 const AuthSchema = RegistrationSchema.omit({ password: true });
 type AuthUser = z.infer<typeof AuthSchema> & { id: string };
@@ -78,4 +79,16 @@ const isLoggedIn = (
 	}
 };
 
-export { validateRegistration, validateLogin, isAlreadyLoggedIn, isLoggedIn };
+const loginLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15mins
+	max: 5,
+	message: "Too many login attempts, please try again later",
+});
+
+export {
+	loginLimiter,
+	validateRegistration,
+	validateLogin,
+	isAlreadyLoggedIn,
+	isLoggedIn,
+};

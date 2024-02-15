@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextArea, Dialog } from "@radix-ui/themes";
+import { TextArea } from "@radix-ui/themes";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../ui/button";
@@ -11,13 +11,24 @@ import {
   FormControl,
   FormDescription,
 } from "../ui/form";
+import React from "react";
+import axios from "@/api/axios";
+import { useToast } from "@/components/ui/use-toast";
 
 interface MessageFormProps {
   maxLength?: number;
+  userId: string;
 }
-const MessageForm: React.FC<MessageFormProps> = ({ maxLength = 256 }) => {
+
+const MessageForm: React.FC<MessageFormProps> = ({
+  userId,
+  maxLength = 256,
+}) => {
+  const [isLoading, setLoading] = React.useState(false);
+  const { toast } = useToast();
+
   const formSchema = z.object({
-    message: z
+    content: z
       .string()
       .min(1)
       .max(maxLength)
@@ -27,15 +38,27 @@ const MessageForm: React.FC<MessageFormProps> = ({ maxLength = 256 }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      message: "",
+      content: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const onSubmit = async (values: any) => {
+    try {
+      setLoading(true);
+      console.log(values);
+      await axios.post(`/users/${userId}/messages`, values);
+      toast({
+        description: "Your message has been sent.",
+      });
+      form.reset({ content: "" });
+    } catch (err) {
+      toast({
+        title: "Uh oh! Something went wrong",
+        description: "There was a problem with your request.",
+      });
+    }
+    setLoading(false);
+  };
 
   return (
     <Form {...form}>
@@ -45,7 +68,7 @@ const MessageForm: React.FC<MessageFormProps> = ({ maxLength = 256 }) => {
       >
         <FormField
           control={form.control}
-          name="message"
+          name="content"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Message</FormLabel>
@@ -66,11 +89,9 @@ const MessageForm: React.FC<MessageFormProps> = ({ maxLength = 256 }) => {
             </FormItem>
           )}
         ></FormField>
-        <Dialog.Trigger>
-          <Button type="submit" className="py-3 w-full">
-            Submit
-          </Button>
-        </Dialog.Trigger>
+        <Button type="submit" className="py-3 w-full" disabled={isLoading}>
+          Submit
+        </Button>
       </form>
     </Form>
   );

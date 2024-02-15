@@ -1,10 +1,12 @@
 import MessageForm from "@/components/message/message-form";
 import MessageGuideline from "@/components/message/guideline";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ScreenLoader from "@/components/ScreenLoader";
 import axios from "@/api/axios";
 import React from "react";
 import NotFoundPage from "./404";
+import { useAuth } from "@/contexts/auth";
+import { useToast } from "@/components/ui/use-toast";
 
 interface PageParams {
   username?: string;
@@ -16,16 +18,27 @@ function MessagePage() {
   const [userId, setUserId] = React.useState("");
   const [isLoading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const fetchUser = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await axios.get(`/users/exists/${params.username}`);
       setUserId(response.data.user.id);
+      setLoading(false);
+      if (user && user.id === response.data.user.id) {
+        toast({
+          title: "Uh oh, we're sorry!",
+          description:
+            "Unfortunately... we can't let you send a message to yourself... 😿",
+        });
+        navigate("/dashboard");
+      }
     } catch (err) {
       setError(true);
     }
-    setLoading(false);
   };
 
   React.useEffect(() => {

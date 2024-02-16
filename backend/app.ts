@@ -50,7 +50,7 @@ export default class App {
 		};
 
 		this.app.disable("x-powered-by");
-		this.app.set("trust proxy", true);
+		this.app.set("trust proxy", 1);
 		this.app.use(cors(corsOptions));
 		this.app.use(morgan("dev"));
 		this.app.use(express.json());

@@ -10,7 +10,7 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import React from "react";
 
 interface MessageCarouselProps {
-  messages: string[];
+  messages: { content: string; id: string }[];
 }
 
 const MessageCarousel: React.FC<MessageCarouselProps> = ({ messages = [] }) => {
@@ -25,7 +25,7 @@ const MessageCarousel: React.FC<MessageCarouselProps> = ({ messages = [] }) => {
           setOpen(false);
         }}
       >
-        <p className="max-w-[250px]">{messages.at(idx)}</p>
+        <p className="max-w-[250px]">{messages.at(idx)?.content}</p>
       </Modal>
       <div className="mx-auto p-4 mt-12 mb-4 px-8">
         <h1 className="mb-8 text-center text-2xl font-medium">
@@ -38,7 +38,7 @@ const MessageCarousel: React.FC<MessageCarouselProps> = ({ messages = [] }) => {
         >
           <CarouselContent className="h-[275px] my-4">
             {messages.map((message, idx) => (
-              <CarouselItem className="basis-1/2" key={idx}>
+              <CarouselItem className="basis-1/2" key={message.id}>
                 <ScrollArea
                   className="max-h-full px-2 py-1 border rounded-lg shadow cursor-pointer"
                   onClick={() => {
@@ -46,7 +46,9 @@ const MessageCarousel: React.FC<MessageCarouselProps> = ({ messages = [] }) => {
                     setOpen(true);
                   }}
                 >
-                  <p className="text-sm font-semibold">{message}</p>
+                  <p className="h-[200px] flex items-center text-center text-sm font-semibold">
+                    {message.content}
+                  </p>
                 </ScrollArea>
               </CarouselItem>
             ))}

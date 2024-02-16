@@ -12,6 +12,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "../ui/use-toast";
+import axios from "@/api/axios";
+import { AxiosError } from "axios";
+import { CircleLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -19,6 +24,9 @@ const formSchema = z.object({
 });
 
 const LoginForm: React.FC = () => {
+  const [loading, setLoading] = React.useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,10 +35,42 @@ const LoginForm: React.FC = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setLoading(true);
+      await axios.post("/auth/login", values);
+
+      toast({
+        title: "Yay! You're logged in 🙌",
+        description: "Welcome boss 🤝",
+      });
+
+      form.reset({
+        email: "",
+        password: "",
+      });
+      setLoading(false);
+
+      navigate("/dashboard", { replace: true });
+    } catch (err) {
+      const toastProp = {
+        title: "Uh oh! we couldn't sign-in",
+        description: "We were unable to sign-in",
+      };
+
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 400) {
+          toastProp.description =
+            "cross-check again, you provided an invalid email address";
+        } else if (err.response?.status === 404) {
+          toastProp.description =
+            "Seems like you haven't created an account.. that's awful 😿";
+        }
+        toast(toastProp);
+      }
+    }
+
+    setLoading(false);
   }
 
   return (
@@ -66,8 +106,15 @@ const LoginForm: React.FC = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="py-3 w-full">
-            Submit
+          <Button type="submit" className="py-3 w-full" disabled={loading}>
+            {loading ? (
+              <span className="flex gap-1">
+                <CircleLoader size={20} speedMultiplier={2} color="#ffffff" />
+                Loading...
+              </span>
+            ) : (
+              "Submit"
+            )}
           </Button>
         </form>
       </Form>

@@ -21,7 +21,6 @@ const SideBar: React.FC<NavProps> = ({ location, items = [] }) => {
       <nav>
         <ul className="space-y-1">
           {items.map((item, idx) => {
-            console.log(item.to, location.pathname);
             return (
               <li key={idx}>
                 <Link

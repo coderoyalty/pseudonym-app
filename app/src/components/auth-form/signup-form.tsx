@@ -13,6 +13,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import axios from "@/api/axios";
+import { useToast } from "../ui/use-toast";
+import { AxiosError } from "axios";
+import { CircleLoader } from "react-spinners";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -20,7 +24,13 @@ const formSchema = z.object({
   password: z.string().min(8),
 });
 
-const SignupForm: React.FC = () => {
+interface SignupFormProps<T = any> {
+  changeTab?: (value: T) => void;
+}
+
+const SignupForm: React.FC<SignupFormProps> = ({ changeTab = () => {} }) => {
+  const [loading, setLoading] = React.useState(false);
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -30,10 +40,40 @@ const SignupForm: React.FC = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setLoading(true);
+      await axios.post("/auth/register", values);
+
+      toast({
+        title: "Yay! We've created your account 🙌",
+        description: "Check your mail to verify your email address",
+      });
+
+      form.reset({
+        username: "",
+        email: "",
+        password: "",
+      });
+      setLoading(false);
+
+      changeTab("login");
+    } catch (err) {
+      const toastProp = {
+        title: "Uh oh! couldn't create your account",
+        description: "We were unable to create an account for you",
+      };
+
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 409) {
+          toastProp.description =
+            "The email address or username might already exists";
+        }
+        toast(toastProp);
+      }
+    }
+
+    setLoading(false);
   }
 
   return (
@@ -87,8 +127,15 @@ const SignupForm: React.FC = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="py-3 w-full">
-            Submit
+          <Button type="submit" className="py-3 w-full" disabled={loading}>
+            {loading ? (
+              <span className="flex gap-1">
+                <CircleLoader size={20} speedMultiplier={2} color="#ffffff" />
+                Loading...
+              </span>
+            ) : (
+              "Submit"
+            )}
           </Button>
         </form>
       </Form>

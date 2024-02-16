@@ -1,8 +1,10 @@
 import AuthForm from "@/components/auth-form/auth-form";
-import { useSearchParams } from "react-router-dom";
+import { useAuth } from "@/contexts/auth";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function AuthPage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   let type = searchParams.get("type")!;
 
@@ -11,6 +13,11 @@ export default function AuthPage() {
     searchParams.set("type", "login");
   }
 
+  const { user } = useAuth();
+
+  if (user) {
+    navigate("/dashboard");
+  }
   return (
     <div>
       <AuthForm authType={type as any} />

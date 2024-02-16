@@ -1,12 +1,12 @@
 import MessageForm from "@/components/message/message-form";
 import MessageGuideline from "@/components/message/guideline";
-import {
-  Dialog,
-  DialogClose,
-  Flex,
-  Button as RadixBtn,
-} from "@radix-ui/themes";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import ScreenLoader from "@/components/ScreenLoader";
+import axios from "@/api/axios";
+import React from "react";
+import NotFoundPage from "./404";
+import { useAuth } from "@/contexts/auth";
+import { useToast } from "@/components/ui/use-toast";
 
 interface PageParams {
   username?: string;
@@ -15,8 +15,51 @@ interface PageParams {
 
 function MessagePage() {
   const params = useParams<PageParams>();
+  const [userId, setUserId] = React.useState("");
+  const [isLoading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const fetchUser = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`/users/exists/${params.username}`);
+      setUserId(response.data.user.id);
+      setLoading(false);
+      if (user && user.id === response.data.user.id) {
+        toast({
+          title: "Uh oh, we're sorry!",
+          description:
+            "Unfortunately... we can't let you send a message to yourself... 😿",
+        });
+        navigate("/dashboard", {
+          replace: true,
+          state: {
+            from: {
+              pathname: location.pathname,
+            },
+          },
+        });
+      }
+    } catch (err) {
+      setError(true);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchUser();
+  }, []);
+
+  if (error) {
+    return <NotFoundPage />;
+  }
+
   return (
     <>
+      <ScreenLoader isLoading={isLoading} />
       <div className="min-h-screen flex flex-col gap-2 max-w-[600px] max-sm:w-[min(400px,100%)] mx-auto p-4">
         <h1 className="text-2xl font-bold py-2 text-center text-slate-950">
           <a href="/" className="scroll-m-20 border-b border-blue-300">
@@ -27,30 +70,7 @@ function MessagePage() {
           Say something to{" "}
           <span className="text-blue-500">@{params.username}</span>
         </h2>
-        <Dialog.Root>
-          <MessageForm maxLength={300} />
-          <Dialog.Content>
-            <Dialog.Title>🚀 Coming soon!</Dialog.Title>
-            <DialogClose />
-            <Dialog.Description>
-              This feature is yet to roll-out. The username @{params.username}{" "}
-              probably doesn't exist.
-              <br />
-              This is just a preview page.
-            </Dialog.Description>
-            <Flex gap="3" justify="end" mt="3">
-              <Dialog.Close>
-                <RadixBtn
-                  variant="surface"
-                  className="cursor-pointer"
-                  color="bronze"
-                >
-                  Close
-                </RadixBtn>
-              </Dialog.Close>
-            </Flex>
-          </Dialog.Content>
-        </Dialog.Root>
+        <MessageForm maxLength={300} userId={userId} />
         <MessageGuideline />
       </div>
     </>

@@ -49,6 +49,8 @@ export default class App {
 			credentials: true,
 		};
 
+		this.app.disable("x-powered-by");
+		this.app.set("trust proxy", true);
 		this.app.use(cors(corsOptions));
 		this.app.use(morgan("dev"));
 		this.app.use(express.json());

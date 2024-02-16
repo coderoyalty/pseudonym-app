@@ -45,7 +45,6 @@ const MessageForm: React.FC<MessageFormProps> = ({
   const onSubmit = async (values: any) => {
     try {
       setLoading(true);
-      console.log(values);
       await axios.post(`/users/${userId}/messages`, values);
       toast({
         description: "Your message has been sent.",

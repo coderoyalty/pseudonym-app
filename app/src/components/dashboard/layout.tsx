@@ -8,36 +8,38 @@ import {
 import { Outlet, useLocation } from "react-router-dom";
 import MobileNav from "./mobile-nav";
 import SideBar, { NavItem } from "./sidebar";
+import { ObserverType, useAuth } from "@/contexts/auth";
+
+const items: NavItem[] = [
+  {
+    icon: DashboardIcon,
+    to: "/dashboard",
+    name: "Home",
+  },
+  {
+    icon: EnvelopeClosedIcon,
+    to: "/dashboard/messages",
+    name: "Inbox",
+  },
+  {
+    icon: AvatarIcon,
+    to: "/dashboard/account",
+    name: "Account",
+  },
+  {
+    icon: GearIcon,
+    to: "/dashboard/settings",
+    name: "Settings",
+  },
+  {
+    icon: ArchiveIcon,
+    to: "/dashboard/archive",
+    name: "Archive",
+  },
+];
 
 const DashboardLayout = () => {
   const location = useLocation();
-  const items: NavItem[] = [
-    {
-      icon: DashboardIcon,
-      to: "/dashboard",
-      name: "Home",
-    },
-    {
-      icon: EnvelopeClosedIcon,
-      to: "/dashboard/messages",
-      name: "Inbox",
-    },
-    {
-      icon: AvatarIcon,
-      to: "/dashboard/account",
-      name: "Account",
-    },
-    {
-      icon: GearIcon,
-      to: "/dashboard/settings",
-      name: "Settings",
-    },
-    {
-      icon: ArchiveIcon,
-      to: "/dashboard/archive",
-      name: "Archive",
-    },
-  ];
 
   return (
     <>

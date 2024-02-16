@@ -1,4 +1,5 @@
 import axios from "@/api/axios";
+import ScreenLoader from "@/components/ScreenLoader";
 import { AxiosError } from "axios";
 import React from "react";
 
@@ -14,7 +15,10 @@ const AuthContext = React.createContext<AuthContextType>(null!);
 
 interface IUser {
   id: string;
+  username: string;
   email: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export enum ObserverType {
@@ -53,11 +57,12 @@ class AuthObserver<T = string> {
 
 export const AuthProvider = ({ children }: { children: React.JSX.Element }) => {
   const [user, setUser] = React.useState<IUser | null>(null);
+  const [loading, setLoading] = React.useState(false);
   const [isLoggedIn, setLoggedIn] = React.useState(false);
 
   const observer = new AuthObserver<ObserverType>();
 
-  const signin = (user: any) => {
+  const signin = (user: IUser) => {
     setUser(user);
     setLoggedIn(true);
   };
@@ -93,7 +98,27 @@ export const AuthProvider = ({ children }: { children: React.JSX.Element }) => {
     }
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  React.useEffect(() => {
+    async function fetchUser() {
+      setLoading(true);
+      console.log("fetching user");
+      try {
+        const response = await axios.get("/users/me/stats");
+        setUser(response.data.user);
+        console.log("fetched user");
+      } catch (err) {}
+      setLoading(false);
+    }
+
+    fetchUser();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={value}>
+      <ScreenLoader isLoading={loading} info="checking session state..." />
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

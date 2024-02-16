@@ -2,6 +2,7 @@ import useSpecificDescendantClick from "@/hooks/useSpecificDescendantClick";
 import { Button } from "../ui/button";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/auth";
 
 interface NavLinksProps {
   autoHide?: boolean;
@@ -17,7 +18,9 @@ const NavLinks: React.FC<NavLinksProps> = ({
   const ref = React.useRef(null);
   useSpecificDescendantClick(ref, tag, onTagClick);
 
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const to = user ? "/dashboard" : "/auth?type=signup";
 
   return (
     <>
@@ -55,9 +58,9 @@ const NavLinks: React.FC<NavLinksProps> = ({
 
       <Button
         className={autoHide ? "max-md:hidden" : ""}
-        onClick={() => navigate("/auth?type=signup")}
+        onClick={() => navigate(to)}
       >
-        Get Started
+        {user ? "Dashboard" : "Get Started"}
       </Button>
     </>
   );

@@ -1,9 +1,9 @@
 import {
-  GearIcon,
   EnvelopeClosedIcon,
   ArchiveIcon,
   AvatarIcon,
   DashboardIcon,
+  HomeIcon,
 } from "@radix-ui/react-icons";
 import { Outlet, useLocation } from "react-router-dom";
 import MobileNav from "./mobile-nav";
@@ -11,9 +11,14 @@ import SideBar, { NavItem } from "./sidebar";
 
 const items: NavItem[] = [
   {
+    icon: HomeIcon,
+    to: "/",
+    name: "Home",
+  },
+  {
     icon: DashboardIcon,
     to: "/dashboard",
-    name: "Home",
+    name: "Dashboard",
   },
   {
     icon: EnvelopeClosedIcon,
@@ -21,19 +26,14 @@ const items: NavItem[] = [
     name: "Inbox",
   },
   {
-    icon: AvatarIcon,
-    to: "/dashboard/account",
-    name: "Account",
-  },
-  {
-    icon: GearIcon,
-    to: "/dashboard/settings",
-    name: "Settings",
-  },
-  {
     icon: ArchiveIcon,
     to: "/dashboard/archive",
     name: "Archive",
+  },
+  {
+    icon: AvatarIcon,
+    to: "/dashboard/profile",
+    name: "Profile",
   },
 ];
 

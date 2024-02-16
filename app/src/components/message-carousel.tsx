@@ -46,7 +46,9 @@ const MessageCarousel: React.FC<MessageCarouselProps> = ({ messages = [] }) => {
                     setOpen(true);
                   }}
                 >
-                  <p className="text-sm font-semibold">{message.content}</p>
+                  <p className="h-[200px] flex items-center text-center text-sm font-semibold">
+                    {message.content}
+                  </p>
                 </ScrollArea>
               </CarouselItem>
             ))}

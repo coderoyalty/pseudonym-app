@@ -3,7 +3,7 @@ import React from "react";
 import SignupForm from "./signup-form";
 import LoginForm from "./login-form";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { IconButton, Tooltip } from "@radix-ui/themes";
 
 interface AuthFormProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -13,6 +13,12 @@ interface AuthFormProps extends React.ComponentPropsWithoutRef<"div"> {
 const AuthForm: React.FC<AuthFormProps> = ({ authType = "login" }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [value, setValue] = React.useState(authType);
+  const [params, setSearchParams] = useSearchParams();
+
+  React.useEffect(() => {
+    setSearchParams({ ...params, type: value });
+  }, [value]);
 
   const onPrevLocation = () => {
     let from = location.state?.from?.pathname || "/";
@@ -36,7 +42,14 @@ const AuthForm: React.FC<AuthFormProps> = ({ authType = "login" }) => {
           </IconButton>
         </Tooltip>
       </div>
-      <Tabs defaultValue={authType} className="w-[400px] mx-auto">
+      <Tabs
+        className="w-[400px] mx-auto"
+        defaultValue={authType}
+        value={value}
+        onValueChange={(value) => {
+          setValue(value as any);
+        }}
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="login">Login</TabsTrigger>
           <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -48,7 +61,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ authType = "login" }) => {
         </TabsContent>
         <TabsContent value="signup">
           <div className="my-12 mx-auto border p-4 rounded-md shadow-md">
-            <SignupForm />
+            <SignupForm changeTab={setValue} />
           </div>
         </TabsContent>
       </Tabs>

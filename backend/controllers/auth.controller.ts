@@ -34,7 +34,10 @@ class AuthController extends BaseController {
 		const { email, password } = req.body;
 
 		const token = await AuthService.login({ email, password });
-		const cookie = new Cookie("auth", token, { httpOnly: true });
+		const cookie = new Cookie("auth", token, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+		});
 		cookie.set(res);
 
 		return res.status(200).json({

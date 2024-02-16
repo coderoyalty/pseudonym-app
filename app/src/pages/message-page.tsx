@@ -1,6 +1,6 @@
 import MessageForm from "@/components/message/message-form";
 import MessageGuideline from "@/components/message/guideline";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import ScreenLoader from "@/components/ScreenLoader";
 import axios from "@/api/axios";
 import React from "react";
@@ -21,6 +21,7 @@ function MessagePage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const fetchUser = async () => {
     try {
@@ -34,7 +35,14 @@ function MessagePage() {
           description:
             "Unfortunately... we can't let you send a message to yourself... 😿",
         });
-        navigate("/dashboard");
+        navigate("/dashboard", {
+          replace: true,
+          state: {
+            from: {
+              pathname: location.pathname,
+            },
+          },
+        });
       }
     } catch (err) {
       setError(true);

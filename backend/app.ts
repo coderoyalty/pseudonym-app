@@ -3,6 +3,8 @@ import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
 import BaseController from "./controllers/base.controller";
 import config from "./utils/config";
+import errorMiddleWare from "./middlewares/error.middleware";
+import cookieParser from "cookie-parser";
 
 export default class App {
 	private static instance: App | null = null;
@@ -50,6 +52,7 @@ export default class App {
 		this.app.use(cors(corsOptions));
 		this.app.use(morgan("dev"));
 		this.app.use(express.json());
+		this.app.use(cookieParser(config.COOKIE_SECRET));
 		this.app.use(
 			express.urlencoded({
 				extended: false,
@@ -65,7 +68,12 @@ export default class App {
 		return this.instance;
 	}
 
+	private initHandler() {
+		this.app.use(errorMiddleWare);
+	}
+
 	public run() {
+		this.initHandler();
 		const server = this.app.listen(this.port, () => {
 			const time = new Date().toISOString();
 			console.log(

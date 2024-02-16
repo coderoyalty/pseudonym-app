@@ -85,13 +85,10 @@ export const AuthProvider = ({ children }: { children: React.JSX.Element }) => {
       return response;
     },
     function (error) {
-      console.log(error);
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
           observer.trigger(ObserverType.UNAUTHORIZED);
         }
-      } else {
-        console.error(error);
       }
 
       return Promise.reject(error);
@@ -101,11 +98,9 @@ export const AuthProvider = ({ children }: { children: React.JSX.Element }) => {
   React.useEffect(() => {
     async function fetchUser() {
       setLoading(true);
-      console.log("fetching user");
       try {
         const response = await axios.get("/users/me/stats");
         setUser(response.data.user);
-        console.log("fetched user");
       } catch (err) {}
       setLoading(false);
     }

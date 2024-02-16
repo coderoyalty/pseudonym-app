@@ -8,7 +8,6 @@ import {
 import { Outlet, useLocation } from "react-router-dom";
 import MobileNav from "./mobile-nav";
 import SideBar, { NavItem } from "./sidebar";
-import { ObserverType, useAuth } from "@/contexts/auth";
 
 const items: NavItem[] = [
   {

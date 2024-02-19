@@ -51,21 +51,23 @@ const DashboardHome: React.FC = () => {
 
   return (
     <>
-      <UserStatsPanel
-        messageCount={data?.messagesCount}
-        archivedCount={data?.archivedCount}
-      />
-      <div className="p-4">
-        <h1 className="font-medium">
-          Username: <span className="text-blue-600">{user?.username}</span>
-        </h1>
-        <h1 className="font-medium">Email: {user?.email}</h1>
-      </div>
+      <div id="component-to-capture">
+        <UserStatsPanel
+          messageCount={data?.messagesCount}
+          archivedCount={data?.archivedCount}
+        />
+        <div className="p-4">
+          <h1 className="font-medium">
+            Username: <span className="text-blue-600">{user?.username}</span>
+          </h1>
+          <h1 className="font-medium">Email: {user?.email}</h1>
+        </div>
 
-      <CopyableInput value={url} />
+        <CopyableInput value={url} />
 
-      <div className="relative max-w-full">
-        <MessageCarousel messages={data?.recentMessages || []} />
+        <div className="relative max-w-full">
+          <MessageCarousel messages={data?.recentMessages || []} />
+        </div>
       </div>
     </>
   );

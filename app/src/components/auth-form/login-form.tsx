@@ -65,6 +65,9 @@ const LoginForm: React.FC = () => {
         } else if (err.response?.status === 404) {
           toastProp.description =
             "Seems like you haven't created an account.. that's awful 😿";
+        } else if (err.response?.status === 429) {
+          toastProp.description =
+            "You'll have to hold on, you're trying too hard!";
         }
         toast(toastProp);
       }

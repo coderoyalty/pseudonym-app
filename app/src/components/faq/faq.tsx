@@ -42,8 +42,11 @@ export const FAQ: React.FC<FAQProps> = ({}) => {
           <AccordionItem value="item-1b">
             <AccordionTrigger>How do I share my link?</AccordionTrigger>
             <AccordionContent>
+              In the user dashboard, you will see a copyable input, click the
+              copy button and you'll have your link copied to your clipboard.
+              <br />
               Your link should looks something like this:
-              <Badge> {"https://pseudonym.vercel.app/@<username>"}</Badge>
+              <Badge> {"https://pseudonym-app.vercel.app/<username>"}</Badge>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">

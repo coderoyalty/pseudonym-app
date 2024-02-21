@@ -1,6 +1,6 @@
 import React from "react";
-import MessageCarousel from "../message-carousel";
-import CopyableInput from "../copyable-input";
+import MessageCarousel from "@/components/message-carousel";
+import CopyableInput from "@/components/copyable-input";
 import { useAuth } from "@/contexts/auth";
 import axios from "@/api/axios";
 

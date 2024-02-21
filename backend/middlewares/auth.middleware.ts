@@ -80,7 +80,7 @@ const isLoggedIn = (
 };
 
 const loginLimiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15mins
+	windowMs: 5 * 60 * 1000, // 5mins
 	max: 5,
 	message: "Too many login attempts, please try again later",
 });

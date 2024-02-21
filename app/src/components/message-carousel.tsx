@@ -26,7 +26,7 @@ const MessageCarousel: React.FC<MessageCarouselProps> = ({ messages = [] }) => {
         }}
       >
         <div className="min-h-[80dvh] w-[80dvw] flex flex-col gap-3 justify-center items-center">
-          <p className="min-h-[200px] max-w-[250px]">
+          <p className="min-h-[200px] max-w-[250px] whitespace-pre-wrap">
             {messages.at(idx)?.content}
           </p>
           <span className="text-base font-medium">
@@ -54,7 +54,7 @@ const MessageCarousel: React.FC<MessageCarouselProps> = ({ messages = [] }) => {
                     setOpen(true);
                   }}
                 >
-                  <p className="min-h-[200px] max-sm:max-h-auto flex justify-center items-center text-center text-sm font-semibold">
+                  <p className="min-h-[200px] max-sm:max-h-auto flex justify-center items-center text-sm font-semibold whitespace-pre-wrap">
                     {message.content}
                   </p>
                 </ScrollArea>

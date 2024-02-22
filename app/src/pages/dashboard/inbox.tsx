@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import axios from "@/api/axios";
 import { useAuth } from "@/contexts/auth";
 import { Button } from "@radix-ui/themes";
 import { CaretLeftIcon, CaretRightIcon } from "@radix-ui/react-icons";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface InboxContent {
   id: string;
@@ -98,16 +99,22 @@ const InboxMessagesPanel: React.FC<InboxMessagesPanelProps> = ({
 
 export default function Inbox() {
   const [current, setCurrent] = useState(1);
-  const [state, dispatch] = useReducer(inboxReducer, {
+  const [{ contentList, pagination }, dispatch] = useReducer(inboxReducer, {
     contentList: [],
     pagination: { prev: null, next: null },
   });
+  const [state, setState] = useState<"loading" | "error" | "idle">("idle");
   const { user } = useAuth();
 
   const size = 10;
 
   useEffect(() => {
     const fetchMessages = async () => {
+      dispatch({
+        type: "SET_PAGINATION",
+        payload: { prev: null, next: null },
+      });
+      setState("loading");
       try {
         const res = await axios.get(
           `/users/${user.id}/messages?size=${size}&page=${current}`
@@ -118,8 +125,10 @@ export default function Inbox() {
           type: "SET_PAGINATION",
           payload: { prev: data.prev, next: data.next },
         });
+        setState("idle");
       } catch (err) {
         console.error("Failed to fetch inbox messages:", err);
+        setState("error");
       }
     };
 
@@ -127,9 +136,23 @@ export default function Inbox() {
   }, [current, user.id]);
 
   return (
-    <div className="flex flex-col items-center gap-4 justify-between my-4">
-      <InboxMessagesPanel messages={state.contentList} />
-      <InboxPagination setCurrent={setCurrent} {...state.pagination} />
-    </div>
+    <>
+      {state === "loading" && (
+        <div className="space-y-2">
+          <div className="h-[200px]  border rounded p-4 space-y-2">
+            <Skeleton className="h-[20px] w-[120px] bg-blue-900/15" />
+            <Skeleton className="h-[20px] bg-blue-900/15" />
+            <Skeleton className="h-[20px] bg-blue-900/15" />
+            <Skeleton className="h-[20px] bg-blue-900/15" />
+            <Skeleton className="h-[20px] bg-blue-900/15" />
+            <Skeleton className="h-[20px] w-[90%] bg-blue-900/15" />
+          </div>
+        </div>
+      )}
+      <div className="flex flex-col items-center gap-4 justify-between my-4">
+        {state === "idle" && <InboxMessagesPanel messages={contentList} />}
+        <InboxPagination setCurrent={setCurrent} {...pagination} />
+      </div>
+    </>
   );
 }

@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
+import { twMerge } from "tailwind-merge";
 
 interface NavLinksProps {
   autoHide?: boolean;
@@ -25,9 +26,10 @@ const NavLinks: React.FC<NavLinksProps> = ({
   return (
     <>
       <ul
-        className={`flex gap-4 items-center justify-center max-md:flex-col text-lg ${
+        className={twMerge(
+          "flex gap-4 items-center justify-center max-md:flex-col text-lg",
           autoHide && "max-md:hidden"
-        }`}
+        )}
         ref={ref}
       >
         <li>
@@ -57,7 +59,7 @@ const NavLinks: React.FC<NavLinksProps> = ({
       </ul>
 
       <Button
-        className={autoHide ? "max-md:hidden" : ""}
+        className={twMerge(autoHide && "max-md:hidden")}
         onClick={() => navigate(to)}
       >
         {user ? "Dashboard" : "Get Started"}

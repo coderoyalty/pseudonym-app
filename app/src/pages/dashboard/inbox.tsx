@@ -76,18 +76,18 @@ const LoaderSkeleton = () => {
   );
 };
 
+//TODO: Sync the URL query parameters with the pagination parameters
 export default function MessagePager() {
-  //TODO: set no. of skeletons based on device type (mobile, pc, desktop etc)
   const NUM_SKELETONS = 4;
+  //TODO: Add a select button with various options to choose from
+  const size = 10;
+
   const [pageIndex, setPageIndex] = useState(1);
   const [{ contentList, pagination }, dispatch] = useReducer(inboxReducer, {
     contentList: [],
-    pagination: { prev: null, next: null },
+    pagination: { prev: null, next: null, total: 0, size },
   });
   const { user } = useAuth();
-
-  //TODO: Add a select button with various options to choose from
-  const size = 10;
 
   const { data, isLoading, error } = useSWR<InboxState>(
     `/users/${user.id}/messages?size=${size}&page=${pageIndex}`,
@@ -101,9 +101,12 @@ export default function MessagePager() {
         pagination: {
           next: data.next,
           prev: data.prev,
+          total: data.total,
+          size: size,
         },
       };
 
+      //TODO: updates the pageIndex based on the current page returned from the backend
       return toInbox;
     }
   );
@@ -118,13 +121,9 @@ export default function MessagePager() {
     }
   }, [data]);
 
-  if (error) {
-    return <ErrorDisplay message="we couldn't fetch your data" />;
-  }
-
   if (isLoading) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-2 my-4">
         {Array.from({ length: NUM_SKELETONS }).map((_, idx) => (
           <LoaderSkeleton key={idx} />
         ))}
@@ -132,12 +131,32 @@ export default function MessagePager() {
     );
   }
 
+  if (error) {
+    return <ErrorDisplay message="we couldn't fetch your data" />;
+  }
+
   return (
     <>
       <Dialog.Root>
         <div className="flex flex-col items-center gap-4 justify-between my-4">
           <InboxPaginatedList messages={contentList} />
-          <InboxPagination setPageIndex={setPageIndex} {...pagination} />
+          <div className="space-y-3">
+            {((noPage: number) => {
+              if (pageIndex > noPage) {
+                return <p className="font-medium text-center">page no found</p>;
+              }
+
+              return (
+                <p className="font-medium text-center">
+                  page {pageIndex} of {noPage}
+                </p>
+              );
+            })(Math.floor(pagination.total / size) + 1)}
+            <InboxPagination
+              setPageIndex={setPageIndex}
+              pagination={pagination}
+            />
+          </div>
         </div>
       </Dialog.Root>
     </>

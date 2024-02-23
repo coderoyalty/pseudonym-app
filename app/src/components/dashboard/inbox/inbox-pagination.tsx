@@ -13,8 +13,8 @@ export interface InboxContent {
 export interface InboxPagination {
   prev: number | null;
   next: number | null;
-  //TODO: use the attribute to calculate the no. of pages available
-  total?: number;
+  total: number;
+  size: number;
 }
 
 export interface InboxState {
@@ -52,21 +52,25 @@ export const inboxReducer = (
 };
 
 export interface InboxPaginationProps {
-  prev: number | null;
-  next: number | null;
+  pagination: InboxPagination;
   setPageIndex: (pageIndex: number) => void;
 }
 
 export const InboxPagination: React.FC<InboxPaginationProps> = ({
-  prev,
-  next,
+  pagination: { next, prev, total, size },
   setPageIndex,
 }) => {
+  const noPages = Math.floor(total / size) + 1;
+
   return (
     <div className="space-x-2">
       <Button
-        onClick={() => setPageIndex(prev!)}
-        disabled={!prev}
+        onClick={() => {
+          if (prev && prev < noPages) {
+            setPageIndex(prev);
+          }
+        }}
+        disabled={prev && prev < noPages ? false : true}
         className="cursor-pointer disabled:cursor-not-allowed"
       >
         <CaretLeftIcon width={24} height={24} /> Previous

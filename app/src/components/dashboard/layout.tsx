@@ -17,7 +17,7 @@ const items: NavItem[] = [
   },
   {
     icon: EnvelopeClosedIcon,
-    to: "/dashboard/messages",
+    to: "/dashboard/inbox",
     name: "Inbox",
   },
   {

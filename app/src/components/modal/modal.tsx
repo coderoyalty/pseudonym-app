@@ -3,6 +3,7 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { IconButton } from "@radix-ui/themes";
 import { motion, AnimatePresence } from "framer-motion";
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
 interface ModalProps {
   children?: React.ReactNode;
@@ -52,9 +53,11 @@ const Modal: React.FC<ModalProps> = ({
             animate={{
               opacity: 100,
             }}
-            className={`fixed inset-0 flex items-center justify-center z-50 ${
-              isClosing ? "opacity-0" : "opacity-100"
-            } transition-opacity duration-300`}
+            className={twMerge(
+              "fixed inset-0 flex items-center justify-center z-50",
+              isClosing ? "opacity-0" : "opacity-100",
+              "transition-opacity duration-300"
+            )}
           >
             {/* the blur background */}
             <div className="absolute inset-0 bg-slate-950 opacity-50"></div>

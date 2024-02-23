@@ -14,6 +14,7 @@ import {
 import React from "react";
 import axios from "@/api/axios";
 import { useToast } from "@/components/ui/use-toast";
+import { twMerge } from "tailwind-merge";
 
 interface MessageFormProps {
   maxLength?: number;
@@ -79,9 +80,9 @@ const MessageForm: React.FC<MessageFormProps> = ({
                 ></TextArea>
               </FormControl>
               <FormDescription
-                className={`${
+                className={twMerge(
                   field.value.length > maxLength && "text-red-600"
-                }`}
+                )}
               >
                 {field.value.length}/{maxLength}
               </FormDescription>

@@ -4,6 +4,7 @@ import { Button } from "@radix-ui/themes";
 import React from "react";
 import { Link } from "react-router-dom";
 import { NavProps } from "./sidebar";
+import { twMerge } from "tailwind-merge";
 
 const MobileNav: React.FC<NavProps> = ({ location, items = [] }) => {
   const [isOpen, setOpen] = React.useState(false);
@@ -13,7 +14,7 @@ const MobileNav: React.FC<NavProps> = ({ location, items = [] }) => {
   return (
     <>
       <div
-        className="relative mb-5 block border-b p-4 shadow-inner md:hidden"
+        className="sticky top-0 mb-5 block border-b p-4 z-10 bg-white shadow-inner md:hidden"
         ref={ref}
       >
         <Button
@@ -22,7 +23,11 @@ const MobileNav: React.FC<NavProps> = ({ location, items = [] }) => {
           }}
           variant="outline"
           color="gray"
-          className="flex h-10 w-full items-center justify-between rounded-md cursor-pointer border px-2 text-center text-sm font-medium"
+          className={twMerge(
+            "flex items-center justify-between",
+            "h-10 w-full px-2 text-center text-sm font-medium",
+            "border rounded-md cursor-pointer"
+          )}
         >
           Profile <CaretDownIcon />
         </Button>
@@ -33,11 +38,15 @@ const MobileNav: React.FC<NavProps> = ({ location, items = [] }) => {
               <li key={idx}>
                 <Link
                   to={item.to}
-                  className={`flex w-full items-center rounded px-3 py-1.5 font-medium text-base text-slate-900 ${
+                  className={twMerge(
+                    "flex w-full items-center rounded px-3 py-1.5 font-medium text-base text-slate-900",
                     location.pathname === item.to
                       ? "bg-slate-100"
                       : "hover:bg-slate-200"
-                  }`}
+                  )}
+                  onClick={() => {
+                    setOpen(false);
+                  }}
                 >
                   <span className="flex flex-grow items-center space-x-2">
                     <item.icon width={18} height={18} />

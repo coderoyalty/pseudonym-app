@@ -91,7 +91,9 @@ export default function MessagePager() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const paramPage = parseInt(searchParams.get("page") ?? "1");
-  const [pageIndex, setPageIndex] = useState(isNaN(paramPage) ? 1 : paramPage);
+  const [pageIndex, setPageIndex] = useState(
+    isNaN(paramPage) || paramPage === 0 ? 1 : paramPage
+  );
   const [{ contentList, pagination }, dispatch] = useReducer(inboxReducer, {
     contentList: [],
     pagination: { prev: null, next: null, total: 0, size },

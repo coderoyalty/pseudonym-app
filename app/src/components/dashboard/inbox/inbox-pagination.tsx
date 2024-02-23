@@ -57,20 +57,16 @@ export interface InboxPaginationProps {
 }
 
 export const InboxPagination: React.FC<InboxPaginationProps> = ({
-  pagination: { next, prev, total, size },
+  pagination: { next, prev },
   setPageIndex,
 }) => {
-  const noPages = Math.floor(total / size) + 1;
-
   return (
     <div className="space-x-2">
       <Button
         onClick={() => {
-          if (prev && prev < noPages) {
-            setPageIndex(prev);
-          }
+          setPageIndex(prev!);
         }}
-        disabled={prev && prev < noPages ? false : true}
+        disabled={!prev}
         className="cursor-pointer disabled:cursor-not-allowed"
       >
         <CaretLeftIcon width={24} height={24} /> Previous

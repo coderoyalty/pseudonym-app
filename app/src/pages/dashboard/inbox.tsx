@@ -15,6 +15,7 @@ import {
 import { MessageDialogContent } from "@/components/dashboard/inbox/message-dialog";
 import { ErrorDisplay } from "@/components/dashboard/error";
 import { format } from "timeago.js";
+import { useSearchParams } from "react-router-dom";
 
 interface InboxMessageDialogProps {
   messages: InboxContent[];
@@ -84,40 +85,42 @@ const LoaderSkeleton = () => {
   );
 };
 
-//TODO: Sync the URL query parameters with the pagination parameters
 export default function MessagePager() {
   const NUM_SKELETONS = 4;
-  //TODO: Add a select button with various options to choose from
   const size = 10;
 
-  const [pageIndex, setPageIndex] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const paramPage = parseInt(searchParams.get("page") ?? "1");
+  const [pageIndex, setPageIndex] = useState(isNaN(paramPage) ? 1 : paramPage);
   const [{ contentList, pagination }, dispatch] = useReducer(inboxReducer, {
     contentList: [],
     pagination: { prev: null, next: null, total: 0, size },
   });
+
   const { user } = useAuth();
 
-  const { data, isLoading, error } = useSWR<InboxState>(
-    `/users/${user.id}/messages?size=${size}&page=${pageIndex}`,
-    async (url: string) => {
-      // TODO: remove this delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      const res = await axios.get(url);
-      const data = res.data;
-      const toInbox: InboxState = {
-        contentList: data.data,
-        pagination: {
-          next: data.next,
-          prev: data.prev,
-          total: data.total,
-          size: size,
-        },
-      };
+  useEffect(() => {
+    setSearchParams({ ...searchParams, page: pageIndex.toString() });
+  }, [pageIndex]);
 
-      //TODO: updates the pageIndex based on the current page returned from the backend
-      return toInbox;
-    }
-  );
+  const fetchData = async (url: string) => {
+    const res = await axios.get(url);
+    const data = res.data;
+    const toInbox: InboxState = {
+      contentList: data.data,
+      pagination: {
+        next: data.next,
+        prev: data.prev,
+        total: data.total,
+        size: size,
+      },
+    };
+
+    return toInbox;
+  };
+
+  const url = `/users/${user.id}/messages?size=${size}&page=${pageIndex}`;
+  const { data, isLoading, error } = useSWR<InboxState>(url, fetchData);
 
   useEffect(() => {
     if (data) {

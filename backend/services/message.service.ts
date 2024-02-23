@@ -57,6 +57,7 @@ class MessageService {
 
 		const offset = (page - 1) * size;
 
+		const noPages = Math.floor(total / size) + 1;
 		const next = offset + size < total ? page + 1 : null;
 		const prev = page - 1 > 0 ? page - 1 : null;
 
@@ -65,7 +66,8 @@ class MessageService {
 			count: messages.length,
 			total,
 			next,
-			prev,
+			prev: prev && prev > noPages ? noPages : prev,
+			error: page > noPages ? "out-of-range page" : undefined,
 		};
 	}
 }

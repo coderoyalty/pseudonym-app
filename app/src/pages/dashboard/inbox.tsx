@@ -1,9 +1,16 @@
 import React, { useState, useReducer, useEffect } from "react";
 import axios from "@/api/axios";
 import { useAuth } from "@/contexts/auth";
-import { Button } from "@radix-ui/themes";
-import { CaretLeftIcon, CaretRightIcon } from "@radix-ui/react-icons";
+import { Button, Dialog, IconButton } from "@radix-ui/themes";
+import {
+  CameraIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
+  ArchiveIcon,
+  TrashIcon,
+} from "@radix-ui/react-icons";
 import { Skeleton } from "@/components/ui/skeleton";
+import { twMerge } from "tailwind-merge";
 
 interface InboxContent {
   id: string;
@@ -76,24 +83,91 @@ const InboxPagination: React.FC<InboxPaginationProps> = ({
   );
 };
 
-interface InboxMessagesPanelProps {
+interface InboxMessageDialogProps {
   messages: InboxContent[];
 }
 
-const InboxMessagesPanel: React.FC<InboxMessagesPanelProps> = ({
-  messages,
-}) => {
+interface PageProps extends InboxMessageDialogProps {
+  setIndex: (value: React.SetStateAction<number>) => void;
+}
+
+const Page: React.FC<PageProps> = ({ messages, setIndex }) => {
   return (
-    <div className="flex flex-wrap gap-2 p-4">
-      {messages.map((content) => (
-        <div
-          key={content.id}
-          className="border min-h-[200px] rounded-md p-4 flex-grow flex items-center justify-center"
-        >
-          <p className="whitespace-pre-wrap">{content.content}</p>
-        </div>
+    <div className="flex flex-wrap gap-2 p-4 cursor-pointer">
+      {messages.map((content, idx) => (
+        <Dialog.Trigger>
+          <div
+            onClick={() => {
+              setIndex(idx);
+            }}
+            key={content.id}
+            className={twMerge(
+              "flex-grow flex items-center justify-center",
+              "min-h-[200px] p-4 border rounded-md",
+              "transition-all hover:bg-slate-100/90"
+            )}
+          >
+            <p className="font-medium whitespace-pre-wrap">{content.content}</p>
+          </div>
+        </Dialog.Trigger>
       ))}
     </div>
+  );
+};
+
+interface MessageDialogContentProps {
+  message: InboxContent;
+}
+
+export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
+  message,
+}) => {
+  return (
+    <Dialog.Content style={{ maxWidth: 450 }}>
+      <Dialog.Title align="center">Message</Dialog.Title>
+      <Dialog.Description size="2" mb="4" align="center">
+        Sent: {new Date(message.createdAt).toUTCString()}
+      </Dialog.Description>
+
+      <div
+        className={twMerge(
+          "flex-grow flex items-center justify-center",
+          "min-h-[200px] p-4 border rounded-md"
+        )}
+      >
+        <p className="font-medium whitespace-pre-wrap">{message.content}</p>
+      </div>
+      <div className="flex justify-center gap-2 mt-4">
+        <IconButton color="blue" className="cursor-pointer">
+          <ArchiveIcon width={22} height={22} />
+        </IconButton>
+        <IconButton color="green" className="cursor-pointer">
+          <CameraIcon width={22} height={22} />
+        </IconButton>
+        <IconButton color="red" className="cursor-pointer">
+          <TrashIcon width={22} height={22} />
+        </IconButton>
+      </div>
+    </Dialog.Content>
+  );
+};
+
+const InboxMessageDialog: React.FC<InboxMessageDialogProps> = ({
+  messages,
+}) => {
+  const [idx, setIndex] = React.useState(0);
+
+  return (
+    <>
+      <Dialog.Root>
+        {messages.length > 0 ? (
+          <MessageDialogContent message={messages[idx]} />
+        ) : (
+          ""
+        )}
+        <Page messages={messages} setIndex={setIndex} />
+      </Dialog.Root>
+    </>
   );
 };
 
@@ -150,7 +224,7 @@ export default function Inbox() {
         </div>
       )}
       <div className="flex flex-col items-center gap-4 justify-between my-4">
-        {state === "idle" && <InboxMessagesPanel messages={contentList} />}
+        {state === "idle" && <InboxMessageDialog messages={contentList} />}
         <InboxPagination setCurrent={setCurrent} {...pagination} />
       </div>
     </>

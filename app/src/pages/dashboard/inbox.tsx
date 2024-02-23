@@ -14,6 +14,7 @@ import {
 } from "@/components/dashboard/inbox/inbox-pagination";
 import { MessageDialogContent } from "@/components/dashboard/inbox/message-dialog";
 import { ErrorDisplay } from "@/components/dashboard/error";
+import { format } from "timeago.js";
 
 interface InboxMessageDialogProps {
   messages: InboxContent[];
@@ -33,12 +34,19 @@ const Page: React.FC<PageProps> = ({ messages, setIndex }) => {
             }}
             key={content.id}
             className={twMerge(
-              "flex-grow flex items-center justify-center",
+              "flex-grow flex flex-col",
               "min-h-[200px] p-4 border rounded-md",
               "transition-all hover:bg-slate-100/90"
             )}
           >
-            <p className="font-medium whitespace-pre-wrap">{content.content}</p>
+            <div className="flex-grow flex justify-center items-center">
+              <p className="font-medium whitespace-pre-wrap">
+                {content.content}
+              </p>
+            </div>
+            <div className="text-xs text-right">
+              {format(content.createdAt)}
+            </div>
           </div>
         </Dialog.Trigger>
       ))}

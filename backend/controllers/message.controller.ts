@@ -8,6 +8,7 @@ import { z } from "zod";
 import { isLoggedIn } from "../middlewares/auth.middleware";
 import CustomAPIError from "../errors/custom";
 import MessageService from "../services/message.service";
+import { isValidObjectId } from "mongoose";
 
 const AuthSchema = RegistrationSchema.omit({ password: true });
 type AuthUser = z.infer<typeof AuthSchema> & { id: string };
@@ -70,8 +71,28 @@ class MessageController extends BaseController {
 		});
 	}
 
-	@Patch("/users/:id/messages/:messageId/archived", isLoggedIn)
-	async archiveMessage(req: Request, res: Response) {}
+	@Patch("/users/:id/messages/:messageId", isLoggedIn)
+	async archiveMessage(req: GenericRequest<AuthUser>, res: Response) {
+		const { id, messageId } = req.params;
+		const { action } = req.query;
+
+		if (!isValidObjectId(id) || !isValidObjectId(messageId)) {
+			throw new CustomAPIError("The provided ID is invalid", 400);
+		}
+
+		if (id !== req.user.id) {
+			throw new CustomAPIError(
+				"You're not allowed to perform this action",
+				403,
+			);
+		}
+
+		await MessageService.archiveMessage(id, messageId, action);
+
+		return res.status(200).json({
+			message: "Message has been archived",
+		});
+	}
 
 	@Delete("/users/:id/messages/:msgId", isLoggedIn)
 	async removeMessage(req: Request, res: Response) {}

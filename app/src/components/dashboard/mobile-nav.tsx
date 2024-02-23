@@ -14,7 +14,7 @@ const MobileNav: React.FC<NavProps> = ({ location, items = [] }) => {
   return (
     <>
       <div
-        className="relative mb-5 block border-b p-4 shadow-inner md:hidden"
+        className="sticky top-0 mb-5 block border-b p-4 z-10 bg-white shadow-inner md:hidden"
         ref={ref}
       >
         <Button
@@ -45,9 +45,7 @@ const MobileNav: React.FC<NavProps> = ({ location, items = [] }) => {
                       : "hover:bg-slate-200"
                   )}
                   onClick={() => {
-                    setTimeout(() => {
-                      setOpen(false);
-                    }, 500);
+                    setOpen(false);
                   }}
                 >
                   <span className="flex flex-grow items-center space-x-2">

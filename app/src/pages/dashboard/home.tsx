@@ -3,6 +3,7 @@ import MessageCarousel from "@/components/message-carousel";
 import CopyableInput from "@/components/copyable-input";
 import { useAuth } from "@/contexts/auth";
 import axios from "@/api/axios";
+import { InboxContent } from "@/components/dashboard/inbox/inbox-pagination";
 
 const UserStatsPanel = ({
   messageCount,
@@ -30,10 +31,7 @@ const UserStatsPanel = ({
 interface HomeProps {
   messagesCount: number;
   archivedCount: number;
-  recentMessages: {
-    content: string;
-    id: string;
-  }[];
+  recentMessages: InboxContent[];
 }
 
 const DashboardHome: React.FC = () => {

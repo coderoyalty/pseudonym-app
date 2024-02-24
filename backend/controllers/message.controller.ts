@@ -94,6 +94,26 @@ class MessageController extends BaseController {
 		});
 	}
 
-	@Delete("/users/:id/messages/:msgId", isLoggedIn)
-	async removeMessage(req: Request, res: Response) {}
+	@Delete("/users/:id/messages/:messageId", isLoggedIn)
+	async removeMessage(req: GenericRequest<AuthUser>, res: Response) {
+		const { id, messageId } = req.params;
+
+		if (!isValidObjectId(id) || !isValidObjectId(messageId)) {
+			throw new CustomAPIError("The provided ID is invalid", 400);
+		}
+
+		if (id !== req.user.id) {
+			throw new CustomAPIError(
+				"You're not allowed to perform this action",
+				403,
+			);
+		}
+
+		const message = await MessageService.deleteMessage(id, messageId);
+
+		return res.status(200).json({
+			message: "successfully removed the message",
+			data: message,
+		});
+	}
 }

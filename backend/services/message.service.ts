@@ -108,6 +108,21 @@ class MessageService {
 			);
 		}
 	}
+
+	static async deleteMessage(ownerId: string, messageId: string) {
+		const message = await Message.findOneAndDelete({
+			_id: messageId,
+			owner: ownerId,
+		});
+
+		if (!message) {
+			throw new CustomAPIError(
+				"the provided ID is referring to a non-existing model",
+				404,
+			);
+		}
+		return message;
+	}
 }
 
 export default MessageService;

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Message from "../models/message";
 import CustomAPIError from "../errors/custom";
 import User from "../models/user";
+import { z } from "zod";
 
 interface PaginationInfo {
 	page: number;
@@ -69,6 +70,58 @@ class MessageService {
 			prev: prev && prev > noPages ? noPages : prev,
 			error: page > noPages ? "out-of-range page" : undefined,
 		};
+	}
+
+	static async archiveMessage(ownerId: string, messageId: string, action: any) {
+		if (action === undefined) {
+			throw new CustomAPIError(`query parameter 'action' is required`, 400);
+		}
+
+		const querySchema = z.enum(["unarchive", "archive"]);
+		const parsed = querySchema.safeParse(action);
+		if (!parsed.success) {
+			throw new CustomAPIError(
+				`query parameter 'action' must be 'archive' or 'unarchive'`,
+				400,
+			);
+		}
+
+		const update = {
+			archived: false,
+		};
+		if (parsed.data === "archive") {
+			update.archived = true;
+		}
+
+		const message = await Message.findOneAndUpdate(
+			{
+				_id: messageId,
+				owner: ownerId,
+			},
+			update,
+		);
+
+		if (!message) {
+			throw new CustomAPIError(
+				"the provided ID is referring to a non-existing model",
+				404,
+			);
+		}
+	}
+
+	static async deleteMessage(ownerId: string, messageId: string) {
+		const message = await Message.findOneAndDelete({
+			_id: messageId,
+			owner: ownerId,
+		});
+
+		if (!message) {
+			throw new CustomAPIError(
+				"the provided ID is referring to a non-existing model",
+				404,
+			);
+		}
+		return message;
 	}
 }
 

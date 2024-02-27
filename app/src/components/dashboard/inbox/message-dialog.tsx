@@ -1,11 +1,12 @@
 import { ArchiveIcon, CameraIcon, TrashIcon } from "@radix-ui/react-icons";
-import { Dialog, IconButton } from "@radix-ui/themes";
+import { AlertDialog, Dialog, Flex, IconButton } from "@radix-ui/themes";
 import { twMerge } from "tailwind-merge";
 import { InboxContent } from "./inbox-pagination";
 import * as htmlToImage from "html-to-image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "@/api/axios";
+import { Button } from "@/components/ui/button";
 
 interface MessageDialogContentProps {
   message: InboxContent;
@@ -17,6 +18,7 @@ export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
   process,
 }) => {
   const [isVisible, setVisibility] = useState(true);
+  const [open, setOpen] = useState(false);
   const handleCapture = () => {
     const dialogContent = document.getElementById("dialog-content")!;
 
@@ -62,7 +64,7 @@ export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
       <Dialog.Description size="2" mb="4" align="center">
         Sent: {new Date(message.createdAt).toUTCString()}
       </Dialog.Description>
-
+      {/* content */}
       <div
         className={twMerge(
           "flex-grow flex items-center justify-center",
@@ -71,6 +73,7 @@ export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
       >
         <p className="font-medium whitespace-pre-wrap">{message.content}</p>
       </div>
+
       <AnimatePresence>
         {isVisible && (
           <motion.div
@@ -104,7 +107,9 @@ export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
               <IconButton
                 color="red"
                 className="cursor-pointer"
-                onClick={() => handleDelete()}
+                onClick={() => {
+                  setOpen(true);
+                }}
               >
                 <TrashIcon width={22} height={22} />
               </IconButton>
@@ -114,6 +119,34 @@ export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+      <AlertDialog.Root
+        open={open}
+        onOpenChange={() => setOpen((open) => !open)}
+      >
+        <AlertDialog.Content style={{ maxWidth: 450 }}>
+          <AlertDialog.Title>Delete Message</AlertDialog.Title>
+          <AlertDialog.Description size="2">
+            Are you sure? This message will be deleted, there's no way of
+            recovering it.
+          </AlertDialog.Description>
+
+          <Flex gap="3" mt="4" justify="end">
+            <AlertDialog.Cancel>
+              <Button className="bg-transparent border border-gray-700 hover:bg-gray-50 text-black">
+                Cancel
+              </Button>
+            </AlertDialog.Cancel>
+            <AlertDialog.Action>
+              <Button
+                className="bg-red-700 hover:bg-red-500"
+                onClick={handleDelete}
+              >
+                Delete
+              </Button>
+            </AlertDialog.Action>
+          </Flex>
+        </AlertDialog.Content>
+      </AlertDialog.Root>
     </Dialog.Content>
   );
 };

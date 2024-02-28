@@ -5,13 +5,16 @@ import { InboxContent } from "./inbox-pagination";
 import * as htmlToImage from "html-to-image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "@/api/axios";
 
 interface MessageDialogContentProps {
   message: InboxContent;
+  process?: () => void;
 }
 
 export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
   message,
+  process,
 }) => {
   const [isVisible, setVisibility] = useState(true);
   const handleCapture = () => {
@@ -33,6 +36,24 @@ export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
           setVisibility(true);
         });
     }, 1000);
+  };
+
+  if (!message) {
+    return;
+  }
+
+  const handleDelete = async () => {
+    if (!process) return;
+    await axios.delete(`/users/${message.owner}/messages/${message.id}`);
+    process();
+  };
+
+  const handleArchive = async () => {
+    if (!process) return;
+    await axios.patch(
+      `/users/${message.owner}/messages/${message.id}?action=archive`
+    );
+    process();
   };
 
   return (
@@ -58,9 +79,19 @@ export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
             exit={{ opacity: 0 }}
             className="flex justify-center gap-2 mt-4"
           >
-            <IconButton color="blue" className="cursor-pointer">
-              <ArchiveIcon width={22} height={22} />
-            </IconButton>
+            {/* Archive Button */}
+            {process ? (
+              <IconButton
+                color="blue"
+                className="cursor-pointer"
+                onClick={() => handleArchive()}
+              >
+                <ArchiveIcon width={22} height={22} />
+              </IconButton>
+            ) : (
+              ""
+            )}
+            {/* Snapshot Button */}
             <IconButton
               color="green"
               className="cursor-pointer"
@@ -68,9 +99,18 @@ export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
             >
               <CameraIcon width={22} height={22} />
             </IconButton>
-            <IconButton color="red" className="cursor-pointer">
-              <TrashIcon width={22} height={22} />
-            </IconButton>
+            {/* Delete Button */}
+            {process ? (
+              <IconButton
+                color="red"
+                className="cursor-pointer"
+                onClick={() => handleDelete()}
+              >
+                <TrashIcon width={22} height={22} />
+              </IconButton>
+            ) : (
+              ""
+            )}
           </motion.div>
         )}
       </AnimatePresence>

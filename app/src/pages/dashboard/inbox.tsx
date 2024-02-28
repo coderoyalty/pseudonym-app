@@ -1,9 +1,8 @@
-import React, { useState, useReducer, useEffect } from "react";
+import { useState, useReducer, useEffect } from "react";
 import axios from "@/api/axios";
 import { useAuth } from "@/contexts/auth";
 import { Dialog } from "@radix-ui/themes";
 import { Skeleton } from "@/components/ui/skeleton";
-import { twMerge } from "tailwind-merge";
 import useSWR from "swr";
 import {
   InboxContent,
@@ -12,65 +11,11 @@ import {
   InboxActionType,
   InboxPagination,
 } from "@/components/dashboard/inbox/inbox-pagination";
-import { MessageDialogContent } from "@/components/dashboard/inbox/message-dialog";
 import { ErrorDisplay } from "@/components/dashboard/error";
-import { format } from "timeago.js";
-import { useSearchParams } from "react-router-dom";
-
-interface InboxMessageDialogProps {
-  messages: InboxContent[];
-}
-interface PageProps extends InboxMessageDialogProps {
-  setIndex: (value: React.SetStateAction<number>) => void;
-}
-
-const Page: React.FC<PageProps> = ({ messages, setIndex }) => {
-  return (
-    <div className="flex flex-wrap gap-2 p-4 cursor-pointer">
-      {messages.map((content, idx) => (
-        <Dialog.Trigger key={idx}>
-          <div
-            onClick={() => {
-              setIndex(idx);
-            }}
-            key={content.id}
-            className={twMerge(
-              "flex-grow flex flex-col",
-              "min-h-[200px] p-4 border rounded-md",
-              "transition-all hover:bg-slate-100/90"
-            )}
-          >
-            <div className="flex-grow flex justify-center items-center">
-              <p className="font-medium whitespace-pre-wrap">
-                {content.content}
-              </p>
-            </div>
-            <div className="text-xs text-right">
-              {format(content.createdAt)}
-            </div>
-          </div>
-        </Dialog.Trigger>
-      ))}
-    </div>
-  );
-};
-
-const InboxPaginatedList: React.FC<InboxMessageDialogProps> = ({
-  messages,
-}) => {
-  const [idx, setIndex] = React.useState(0);
-
-  return (
-    <>
-      {messages.length > 0 ? (
-        <MessageDialogContent message={messages[idx]} />
-      ) : (
-        ""
-      )}
-      <Page messages={messages} setIndex={setIndex} />
-    </>
-  );
-};
+import { useNavigate, useSearchParams } from "react-router-dom";
+import emptyIllustration from "@/assets/svg/undraw_empty_data.svg";
+import notFoundIllustration from "@/assets/svg/undraw_not_found.svg";
+import InboxPaginatedList from "@/components/dashboard/inbox/inbox-list";
 
 const LoaderSkeleton = () => {
   return (
@@ -98,8 +43,19 @@ export default function MessagePager() {
     contentList: [],
     pagination: { prev: null, next: null, total: 0, size },
   });
-
   const { user } = useAuth();
+
+  const navigate = useNavigate();
+
+  if (!user) {
+    navigate("/auth?type=login");
+  }
+
+  const [open, setOpen] = useState(false);
+
+  const dialogToggle = () => {
+    setOpen((open) => !open);
+  };
 
   useEffect(() => {
     setSearchParams({ ...searchParams, page: pageIndex.toString() });
@@ -121,7 +77,7 @@ export default function MessagePager() {
     return toInbox;
   };
 
-  const url = `/users/${user.id}/messages?size=${size}&page=${pageIndex}`;
+  const url = `/users/${user?.id}/messages?size=${size}&page=${pageIndex}`;
   const { data, isLoading, error } = useSWR<InboxState>(url, fetchData);
 
   useEffect(() => {
@@ -143,20 +99,38 @@ export default function MessagePager() {
       </div>
     );
   }
-
   if (error) {
     return <ErrorDisplay message="we couldn't fetch your data" />;
   }
-
   return (
     <>
-      <Dialog.Root>
+      <Dialog.Root open={open} onOpenChange={dialogToggle}>
         <div className="flex flex-col items-center gap-4 justify-between my-4">
-          <InboxPaginatedList messages={contentList} />
-          <div className="space-y-3">
+          <InboxPaginatedList
+            messages={contentList}
+            editContentList={(contents: InboxContent[]) => {
+              dispatch({ type: InboxActionType.CONTENT, payload: contents });
+              dialogToggle();
+            }}
+          />
+          <div className="space-y-8 flex flex-col items-center">
             {((noPage: number) => {
               if (pageIndex > noPage) {
-                return <p className="font-medium text-center">page no found</p>;
+                return (
+                  <img
+                    src={notFoundIllustration}
+                    alt="empty illustration"
+                    className="h-[300px]"
+                  />
+                );
+              } else if (contentList.length === 0) {
+                return (
+                  <img
+                    src={emptyIllustration}
+                    alt="empty illustration"
+                    className="h-[300px]"
+                  />
+                );
               }
 
               return (

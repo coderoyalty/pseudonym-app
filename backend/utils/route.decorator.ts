@@ -1,7 +1,6 @@
 import BaseController from "../controllers/base.controller";
 import ControllerFactory from "./controller.factory";
 import asyncHandler from "express-async-handler";
-import App from "../app";
 
 enum HttpMethod {
 	GET = "get",
@@ -45,9 +44,6 @@ function registerRouteWithMethod(
 		default:
 			break;
 	}
-
-	const endpoint = `${method.toUpperCase()} - ${instance.endpoint}${path}`;
-	App.endpoints.push(endpoint);
 }
 
 /**

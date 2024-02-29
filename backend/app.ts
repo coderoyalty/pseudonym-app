@@ -64,7 +64,6 @@ export default class App {
 
 	static getInstance() {
 		if (!this.instance) {
-			console.log(`Application: ✅ created`);
 			this.instance = new App();
 		}
 		return this.instance;
@@ -81,10 +80,6 @@ export default class App {
 			console.log(
 				`[⚡] server started: ${time} => http://localhost:${this.port}/`,
 			);
-			console.log("Registered endpoints:");
-			for (let endpoint of App.endpoints) {
-				console.log("\t" + endpoint);
-			}
 		});
 
 		return server;

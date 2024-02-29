@@ -34,7 +34,6 @@ class ControllerFactory {
 		this.instances.set(name, instance);
 
 		// Log a message indicating that the instance has been created
-		console.log(`${name}: ✅ created`);
 		return this.instances.get(name) as T;
 	}
 }

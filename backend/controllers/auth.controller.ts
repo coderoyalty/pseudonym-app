@@ -54,3 +54,5 @@ class AuthController extends BaseController {
 		});
 	}
 }
+
+export default AuthController;

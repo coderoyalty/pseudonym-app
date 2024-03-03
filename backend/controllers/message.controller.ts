@@ -47,7 +47,8 @@ class MessageController extends BaseController {
 	@Get("/users/:id/messages", isLoggedIn)
 	async fetchAll(req: GenericRequest<AuthUser>, res: Response) {
 		const { id } = req.params;
-		const { page, size } = req.query;
+		const { page, size, type } = req.query;
+
 		const parsed = paginationQuerySchema.safeParse({
 			page: parseInt(page as any),
 			size: parseInt(size as any),
@@ -64,7 +65,11 @@ class MessageController extends BaseController {
 			);
 		}
 
-		const data = await MessageService.fetchMessages(id, parsed.data);
+		const data = await MessageService.fetchMessages(
+			id,
+			parsed.data,
+			type === "archive" ? true : false,
+		);
 
 		return res.status(200).json({
 			...data,

@@ -34,6 +34,7 @@ class MessageService {
 	static async fetchMessages(
 		ownerID: string,
 		{ page = 1, size = 10 }: PaginationInfo,
+		isArchived = false,
 	) {
 		if (!mongoose.isValidObjectId(ownerID)) {
 			throw new CustomAPIError("The provided ID is invalid", 400);
@@ -42,12 +43,13 @@ class MessageService {
 			page = 1;
 		}
 		const skip = size * (page - 1);
+		const filter = {
+			owner: ownerID,
+			archived: isArchived,
+		};
 		const [total, messages] = await Promise.all([
-			Message.countDocuments({
-				owner: ownerID,
-				archived: false,
-			}),
-			Message.find({ owner: ownerID, archived: false })
+			Message.countDocuments(filter),
+			Message.find(filter)
 				.select("-archived")
 				.sort({
 					_id: "desc",

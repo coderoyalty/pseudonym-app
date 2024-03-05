@@ -11,11 +11,13 @@ import { Button } from "@/components/ui/button";
 interface MessageDialogContentProps {
   message: InboxContent;
   process?: () => void;
+  archive?: boolean;
 }
 
 export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
   message,
   process,
+  archive = false,
 }) => {
   const [isVisible, setVisibility] = useState(true);
   const [open, setOpen] = useState(false);
@@ -53,7 +55,9 @@ export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
   const handleArchive = async () => {
     if (!process) return;
     await axios.patch(
-      `/users/${message.owner}/messages/${message.id}?action=archive`
+      `/users/${message.owner}/messages/${message.id}?action=${
+        archive ? "unarchive" : "archive"
+      }`
     );
     process();
   };
@@ -85,7 +89,7 @@ export const MessageDialogContent: React.FC<MessageDialogContentProps> = ({
             {/* Archive Button */}
             {process ? (
               <IconButton
-                color="blue"
+                color={!archive ? "blue" : "iris"}
                 className="cursor-pointer"
                 onClick={() => handleArchive()}
               >

@@ -6,6 +6,7 @@ import NotFoundPage from "@/pages/404";
 import ProtectedRoute from "./protected-route";
 import Profile from "@/pages/dashboard/profile";
 import Inbox from "@/pages/dashboard/inbox";
+import ArchiveInbox from "@/pages/dashboard/archive-inbox";
 
 const route = (
   <React.Fragment>
@@ -20,6 +21,7 @@ const route = (
       <Route path="/dashboard" element={<DashboardHome />} />
       <Route path="/dashboard/profile" element={<Profile />} />
       <Route path="/dashboard/inbox" element={<Inbox />} />
+      <Route path="/dashboard/archive" element={<ArchiveInbox />} />
       <Route path="*" element={<NotFoundPage />} />
     </Route>
   </React.Fragment>

@@ -1,21 +1,21 @@
-import { useState, useReducer, useEffect } from "react";
 import axios from "@/api/axios";
-import { useAuth } from "@/contexts/auth";
-import { Dialog } from "@radix-ui/themes";
-import { Skeleton } from "@/components/ui/skeleton";
-import useSWR from "swr";
+import { ErrorDisplay } from "@/components/dashboard/error";
+import InboxPaginatedList from "@/components/dashboard/inbox/inbox-list";
 import {
-  InboxContent,
   inboxReducer,
   InboxState,
   InboxActionType,
+  InboxContent,
   InboxPagination,
 } from "@/components/dashboard/inbox/inbox-pagination";
-import { ErrorDisplay } from "@/components/dashboard/error";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "@/contexts/auth";
+import { Dialog } from "@radix-ui/themes";
+import { useState, useReducer, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
+import useSWR from "swr";
 import emptyIllustration from "@/assets/svg/undraw_empty_data.svg";
 import notFoundIllustration from "@/assets/svg/undraw_not_found.svg";
-import InboxPaginatedList from "@/components/dashboard/inbox/inbox-list";
 
 const LoaderSkeleton = () => {
   return (
@@ -30,7 +30,7 @@ const LoaderSkeleton = () => {
   );
 };
 
-export default function Inbox() {
+export default function ArchiveInbox() {
   const NUM_SKELETONS = 4;
   const size = 10;
 
@@ -77,7 +77,7 @@ export default function Inbox() {
     return toInbox;
   };
 
-  const url = `/users/${user?.id}/messages?size=${size}&page=${pageIndex}`;
+  const url = `/users/${user?.id}/messages?type=archive&size=${size}&page=${pageIndex}`;
   const { data, isLoading, error } = useSWR<InboxState>(url, fetchData);
 
   useEffect(() => {
@@ -107,6 +107,7 @@ export default function Inbox() {
       <Dialog.Root open={open} onOpenChange={dialogToggle}>
         <div className="flex flex-col items-center gap-4 justify-between my-4">
           <InboxPaginatedList
+            archivedPage={true}
             messages={contentList}
             editContentList={(contents: InboxContent[]) => {
               dispatch({ type: InboxActionType.CONTENT, payload: contents });

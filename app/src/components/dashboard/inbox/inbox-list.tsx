@@ -9,11 +9,13 @@ import { format } from "timeago.js";
 interface InboxMessageDialogProps {
   messages: InboxContent[];
   editContentList: (contents: InboxContent[]) => void;
+  archivedPage?: boolean;
 }
 
 const InboxPaginatedList: React.FC<InboxMessageDialogProps> = ({
   messages,
   editContentList,
+  archivedPage,
 }) => {
   const [idx, setIndex] = React.useState(0);
 
@@ -32,6 +34,7 @@ const InboxPaginatedList: React.FC<InboxMessageDialogProps> = ({
         <MessageDialogContent
           message={messages[idx]}
           process={processMessage}
+          archive={archivedPage}
         />
       ) : (
         ""

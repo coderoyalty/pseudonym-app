@@ -2,12 +2,13 @@ import { Request, Response } from "express";
 import BaseController from "./base.controller";
 import Controller from "../utils/controller.decorator";
 import { GenericRequest } from "../@types";
-import { Post } from "../utils/route.decorator";
+import { Get, Post } from "../utils/route.decorator";
 import { RegistrationSchema } from "../validators/auth.validator";
 import AuthService from "../services/auth.service";
 import {
 	isAlreadyLoggedIn,
 	loginLimiter,
+	emailVerificationRateLimiter,
 	validateLogin,
 	validateRegistration,
 } from "../middlewares/auth.middleware";
@@ -51,6 +52,18 @@ class AuthController extends BaseController {
 		res.clearCookie("auth");
 		res.status(200).json({
 			message: "You've sign-out successfully",
+		});
+	}
+
+	@Get("/verify-email/:token", emailVerificationRateLimiter)
+	async emailVerification(req: Request, res: Response) {
+		const { token } = req.params;
+
+		const updatedUser = await AuthService.verifyEmailToken(token);
+
+		return res.status(200).json({
+			message: "Your email has been verified.",
+			user: updatedUser,
 		});
 	}
 }

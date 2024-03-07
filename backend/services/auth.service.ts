@@ -4,6 +4,7 @@ import User from "../models/user";
 import CustomAPIError from "../errors/custom";
 import { StatusCodes } from "http-status-codes";
 import EmailService from "./email.service";
+import EmailVerification from "../models/verification";
 
 type IAuth = z.infer<typeof RegistrationSchema>;
 
@@ -65,6 +66,35 @@ class AuthService {
 		const token = user.createToken();
 
 		return token;
+	}
+
+	static async verifyEmailToken(token: string) {
+		const emailModel = await EmailVerification.findOne({ code: token });
+
+		if (!emailModel) {
+			throw new CustomAPIError("Invalid or expired token.", 400);
+		}
+
+		const updatedUser = await User.findOneAndUpdate(
+			{
+				email: emailModel.email,
+				isEmailVerified: { $ne: true },
+			},
+			{ isEmailVerified: true },
+			{
+				new: true,
+			},
+		);
+
+		if (!updatedUser) {
+			throw new CustomAPIError(
+				"User not found or email already verified.",
+				404,
+			);
+		}
+
+		await emailModel.deleteOne();
+		return updatedUser;
 	}
 }
 

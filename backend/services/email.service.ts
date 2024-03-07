@@ -2,7 +2,9 @@ import nodemailer from "nodemailer";
 import config from "../utils/config";
 import { verifyEmailHTML } from "../utils/templates/email";
 import EmailVerification from "../models/verification";
-import { v4 as uuid4 } from "uuid";
+import { customAlphabet } from "nanoid";
+
+const nanoid = customAlphabet("1234567890", 6);
 
 enum EmailInfo {
 	SUCCESS,
@@ -11,7 +13,7 @@ enum EmailInfo {
 }
 
 const generateVerificationCode = (userId: string) => {
-	const token = uuid4();
+	const token = nanoid();
 	return token;
 };
 
@@ -39,6 +41,15 @@ class EmailService {
 			return EmailInfo.SENT_ALREADY;
 		}
 
+		const verification = await EmailVerification.create({
+			email: user.email,
+			code: verificationCode,
+		});
+
+		if (!verification) {
+			return EmailInfo.REJECTED;
+		}
+
 		const message = await this.transporter.sendMail({
 			from: `"Pseudonym" ${config.mail.SENDER}`,
 			to: user.email,
@@ -49,13 +60,6 @@ class EmailService {
 		if (message.rejected) {
 			return EmailInfo.REJECTED;
 		}
-
-		const verification = await EmailVerification.create({
-			email: user.email,
-			for: "at_signup",
-			messageId: message.messageId,
-			verificationCode,
-		});
 
 		return EmailInfo.SUCCESS;
 	}

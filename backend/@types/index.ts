@@ -1,5 +1,5 @@
 import express from "express";
-interface GenericRequest<T> extends express.Request {
+interface GenericRequest<T = {}> extends express.Request {
 	user: T;
 }
 

@@ -2,38 +2,30 @@ import mongoose from "mongoose";
 
 interface IEmailVerification extends mongoose.Document {
 	email: string;
-	verificationCode: string;
+	code: string;
 	createdAt: Date;
 }
 
-const EmailVerificationSchema = new mongoose.Schema({
+const emailVerificationSchema = new mongoose.Schema({
 	email: {
 		type: String,
 		required: true,
 		unique: true,
 	},
-	verificationCode: {
+	code: {
 		type: String,
 		required: true,
 	},
 	createdAt: {
 		type: Date,
 		default: Date.now(),
-		expires: 3600, // 1hr
-	},
-	messageId: {
-		type: String,
-		required: true,
-	},
-	for: {
-		type: String,
-		required: true,
+		expires: 600, // 10mins
 	},
 });
 
 const EmailVerification = mongoose.model(
-	"EmailVerification",
-	EmailVerificationSchema,
+	"VerifyEmail",
+	emailVerificationSchema,
 );
 
 export default EmailVerification;

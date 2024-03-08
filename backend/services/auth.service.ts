@@ -41,7 +41,7 @@ class AuthService {
 		}
 
 		//3. send a verification mail
-		await EmailService.sendVerificationEmail({ id: user.id, ...data });
+		await EmailService.sendWelcomeVerificationEmail({ id: user.id, ...data });
 		return;
 	}
 

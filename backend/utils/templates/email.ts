@@ -1,8 +1,4 @@
-const verifyEmailHTML = (
-	name: string,
-	verificationLink: string,
-	verificationCode: string,
-) =>
+const generateWelcomeVerificationEmailHTML = (verificationCode: string) =>
 	`
 <!doctype html>
 <html lang="en">
@@ -64,7 +60,7 @@ const verifyEmailHTML = (
 </html>
 `;
 
-const requestEmailVerificationHTML = (
+const generateEmailVerificationHTML = (
 	name: string,
 	verificationCode: string,
 ) => {
@@ -129,4 +125,4 @@ const requestEmailVerificationHTML = (
 `;
 };
 
-export { verifyEmailHTML, requestEmailVerificationHTML };
+export { generateWelcomeVerificationEmailHTML, generateEmailVerificationHTML };

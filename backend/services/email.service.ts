@@ -1,8 +1,8 @@
 import nodemailer from "nodemailer";
 import config from "../utils/config";
 import {
-	requestEmailVerificationHTML,
-	verifyEmailHTML,
+	generateEmailVerificationHTML,
+	generateWelcomeVerificationEmailHTML,
 } from "../utils/templates/email";
 import EmailVerification from "../models/verification";
 import { customAlphabet } from "nanoid";
@@ -34,7 +34,7 @@ class EmailService {
 		},
 	});
 
-	static async sendVerificationEmail(user: {
+	static async sendWelcomeVerificationEmail(user: {
 		id: string;
 		email: string;
 		username: string;
@@ -61,7 +61,7 @@ class EmailService {
 			from: `"Pseudonym" ${config.mail.SENDER}`,
 			to: user.email,
 			subject: "Welcome to Pseudonym!, Please verify your email address.",
-			html: verifyEmailHTML(user.username, verificationLink, verificationCode),
+			html: generateWelcomeVerificationEmailHTML(verificationCode),
 		});
 
 		if (message.rejected) {
@@ -129,7 +129,7 @@ class EmailService {
 			from: `"Pseudonym" ${config.mail.SENDER}`,
 			to: existingUser.email,
 			subject: "Please verify your email address.",
-			html: requestEmailVerificationHTML(
+			html: generateEmailVerificationHTML(
 				existingUser.username,
 				verificationModel.code,
 			),

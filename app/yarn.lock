@@ -2532,6 +2532,11 @@ inherits@2, inherits@^2.0.3, inherits@^2.0.4:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
+input-otp@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/input-otp/-/input-otp-1.1.0.tgz#d6c017659b782c51e843a840e041a1a52dac462b"
+  integrity sha512-bHM7u1nIbhtupHrCO7hxBksbAp5SNuYYLG9pmMeL9ghJPDDmyJRgJ8dcAylHT9JHyB9tLB+U8tjM8xa+DTpacA==
+
 invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"

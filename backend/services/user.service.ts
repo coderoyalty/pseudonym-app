@@ -18,7 +18,7 @@ class UserService {
 			throw new CustomAPIError("the id provided is invalid", 400);
 		}
 
-		const user = await User.findById(userId).select("-isEmailVerified");
+		const user = await User.findById(userId);
 
 		if (!user) {
 			throw new CustomAPIError(

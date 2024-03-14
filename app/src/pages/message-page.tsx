@@ -1,12 +1,12 @@
 import MessageForm from "@/components/message/message-form";
 import MessageGuideline from "@/components/message/guideline";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import ScreenLoader from "@/components/ScreenLoader";
 import axios from "@/api/axios";
 import React from "react";
 import NotFoundPage from "./404";
 import { useAuth } from "@/contexts/auth";
 import { useToast } from "@/components/ui/use-toast";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 interface PageParams {
   username?: string;
@@ -59,7 +59,7 @@ function MessagePage() {
 
   return (
     <>
-      <ScreenLoader isLoading={isLoading} />
+      <LoadingOverlay isLoading={isLoading} />
       <div className="min-h-screen flex flex-col gap-2 max-w-[600px] max-sm:w-[min(400px,100%)] mx-auto p-4">
         <h1 className="text-2xl font-bold py-2 text-center text-slate-950">
           <a href="/" className="scroll-m-20 border-b border-blue-300">

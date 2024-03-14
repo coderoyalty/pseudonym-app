@@ -86,8 +86,8 @@ const loginLimiter = rateLimit({
 });
 
 const emailVerificationRateLimiter = rateLimit({
-	windowMs: 5 * 60 * 1000, // 5mins
-	max: 5,
+	windowMs: 2 * 60 * 1000, // 2mins
+	max: 1,
 	message: "Too many attempts, please try again later",
 });
 

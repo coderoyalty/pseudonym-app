@@ -99,8 +99,8 @@ class EmailService {
 		// avoid frequent verification request
 		// by enforcing a two minute cooldown period
 		if (verificationModel) {
-			const date = verificationModel.createdAt.getTime();
-			if (date > Date.now() - 1000 * 60 * 2) {
+			const date = new Date(verificationModel.createdAt);
+			if (date.getTime() > Date.now() - 1000 * 60 * 2) {
 				throw new CustomAPIError(
 					"You cannot request a verification email again so soon.",
 					StatusCodes.TOO_MANY_REQUESTS,

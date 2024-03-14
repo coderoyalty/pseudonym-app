@@ -61,7 +61,7 @@ class AuthController extends BaseController {
 		});
 	}
 
-	@Get("/verify-email/:token", emailVerificationRateLimiter)
+	@Get("/verify-email/:token", loginLimiter)
 	async emailVerification(req: Request, res: Response) {
 		const { token } = req.params;
 

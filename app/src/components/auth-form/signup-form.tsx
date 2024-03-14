@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import axios from "@/api/axios";
 import { useToast } from "../ui/use-toast";
 import { AxiosError } from "axios";
-import { CircleLoader } from "react-spinners";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -129,10 +129,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ changeTab = () => {} }) => {
           />
           <Button type="submit" className="py-3 w-full" disabled={loading}>
             {loading ? (
-              <span className="flex gap-1">
-                <CircleLoader size={20} speedMultiplier={2} color="#ffffff" />
+              <>
+                {/* <CircleLoader size={20} speedMultiplier={2} color="#ffffff" /> */}
+                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                 Loading...
-              </span>
+              </>
             ) : (
               "Submit"
             )}

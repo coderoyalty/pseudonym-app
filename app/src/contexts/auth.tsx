@@ -20,6 +20,7 @@ interface IUser {
   email: string;
   createdAt: string;
   updatedAt: string;
+  isEmailVerified: boolean;
 }
 
 export enum ObserverType {

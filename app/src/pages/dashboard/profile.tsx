@@ -6,7 +6,97 @@ import { useAuth } from "@/contexts/auth";
 import useDebounce from "@/hooks/useDebounce";
 import React, { useState, useEffect } from "react";
 
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { useForm } from "react-hook-form";
+
 type StateType = "loading" | "available" | "taken" | "same";
+
+const formSchema = z.object({
+  password: z.string().min(8),
+  new_password: z.string().min(8),
+});
+
+const UpdatePassword = () => {
+  const loading = false;
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      password: "",
+      new_password: "",
+    },
+  });
+
+  return (
+    <div className="space-y-2 mt-8">
+      <span className="text-xl font-bold">Update Password</span>
+      <div className="p-4 border">
+        <Form {...form}>
+          <form className="space-y-4">
+            {/* email address field */}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Enter Old Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="your password"
+                      {...field}
+                      type="password"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* password field */}
+            <FormField
+              control={form.control}
+              name="new_password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>New Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="New password"
+                      {...field}
+                      type="password"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="py-3 w-full" disabled={loading}>
+              {loading ? (
+                <>
+                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Submit"
+              )}
+            </Button>
+          </form>
+        </Form>
+      </div>
+    </div>
+  );
+};
 
 const Profile: React.FC = () => {
   const { user, signin } = useAuth();
@@ -67,7 +157,7 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="rounded-md p-4 space-y-4">
+    <div className="rounded-md p-4 space-y-6">
       <div className="space-y-2">
         <span>id</span>
         <Input
@@ -116,6 +206,7 @@ const Profile: React.FC = () => {
           </Button>
         </div>
       </div>
+      <UpdatePassword />
     </div>
   );
 };

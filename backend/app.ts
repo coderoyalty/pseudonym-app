@@ -1,4 +1,4 @@
-import express, { Express } from "express";
+import express, { Express, Request, Response } from "express";
 import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
 import BaseController from "./controllers/base.controller";
@@ -34,6 +34,11 @@ export default class App {
 		} else {
 			this.app.use(`/api/${endpoint}`, controller.router);
 		}
+
+		// for checking the api status
+		this.app.use("/api/status", (req: Request, res: Response) => {
+			return res.sendStatus(200);
+		});
 	}
 
 	private initMiddleware() {
@@ -81,9 +86,11 @@ export default class App {
 			console.log(
 				`[⚡] server started: ${time} => http://localhost:${this.port}/`,
 			);
-			console.log("Registered endpoints:");
-			for (let endpoint of App.endpoints) {
-				console.log("\t" + endpoint);
+			if (process.env.NODE_ENV == "dev") {
+				console.log("Registered endpoints:");
+				for (let endpoint of App.endpoints) {
+					console.log("\t" + endpoint);
+				}
 			}
 		});
 
